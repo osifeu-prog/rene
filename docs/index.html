@@ -4,17 +4,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Rene - מערכת לימוד תכנות משחקית</title>
-  <meta name="description" content="Rene - התחלה חווייתית לתלמידים: פתיחת פרויקט ראשון בגיטהאב, ניקוד, שיתוף, ומעקב מתקדם לאדמין." />
+  <meta name="description" content="Rene — פתיחת פרויקט ראשון בגיטהאב, נקודות XP, שיתופים אמיתיים, הזמנות לחברים ומעקב אדמין." />
   <style>
-    /* בסיס עיצוב */
     :root{
-      --bg1:#0f1020;
-      --bg2:#24124a;
-      --accent:#ff4d8f;
-      --accent-2:#00ffe1;
-      --text:#ffffff;
-      --glass:rgba(255,255,255,0.12);
-      --glass-strong:rgba(255,255,255,0.2);
+      --bg1:#0e1123; --bg2:#1b1440;
+      --accent:#ff4d8f; --accent2:#00ffe1;
+      --text:#ffffff; --glass:rgba(255,255,255,0.10);
+      --glass-strong:rgba(255,255,255,0.16);
+      --shadow:0 10px 24px rgba(0,0,0,0.35);
+      --radius:16px;
     }
     *{box-sizing:border-box}
     html,body{margin:0;padding:0}
@@ -22,197 +20,145 @@
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       color:var(--text);
       background: radial-gradient(1200px 600px at 20% 10%, #2b1b56 0%, var(--bg1) 40%), linear-gradient(135deg, var(--bg1), var(--bg2));
-      min-height:100vh;
-      overflow-x:hidden;
-      perspective: 1200px;
+      min-height:100vh; overflow-x:hidden; perspective: 1200px;
+      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
     }
     .container{max-width:1200px;margin:0 auto;padding:2rem}
 
-    /* רקע מגניב: שכבות, חלקיקים, וגלים */
-    .bg{
-      position:fixed;inset:0;z-index:-3;overflow:hidden;
+    /* רקע חלק: חלקיקים קלים + שכבות אורב */
+    .bg{position:fixed;inset:0;z-index:-3;overflow:hidden}
+    canvas#particles{position:absolute;inset:0;opacity:0.28;will-change:transform}
+    .orb{
+      position:absolute;width:280px;height:280px;border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, var(--accent2) 0%, #6a37ff 35%, transparent 70%);
+      filter: blur(38px); mix-blend-mode: screen; will-change:transform;
+      animation: orbMove 22s linear infinite;
     }
-    canvas#particles{
-      position:absolute;inset:0;opacity:0.35;
+    .orb.orb2{background: radial-gradient(circle at 70% 30%, var(--accent) 0%, #ffb86b 40%, transparent 70%);animation-duration:28s}
+    @keyframes orbMove{
+      0%{transform: translate3d(8vw,10vh,0) rotate(0deg)}
+      50%{transform: translate3d(72vw,28vh,0) rotate(180deg)}
+      100%{transform: translate3d(8vw,10vh,0) rotate(360deg)}
     }
     .wave{
-      position:absolute;left:0;right:0;bottom:-10vh;height:40vh;
+      position:absolute;left:0;right:0;bottom:-8vh;height:36vh;
       background: radial-gradient(closest-side at 20% 50%, rgba(255,255,255,0.06), transparent 60%),
                   radial-gradient(closest-side at 80% 50%, rgba(255,255,255,0.06), transparent 60%);
-      filter: blur(16px);
-      transform: translateZ(-200px);
+      filter: blur(16px); transform: translateZ(-200px); will-change:transform;
       animation: waveFloat 14s ease-in-out infinite;
     }
-    @keyframes waveFloat{
-      0%,100%{transform: translateY(0) translateZ(-200px)}
-      50%{transform: translateY(-20px) translateZ(-200px)}
-    }
-    .orb{
-      position:absolute;width:300px;height:300px;border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, #00ffe1 0%, #6a37ff 35%, transparent 70%);
-      filter: blur(40px);
-      mix-blend-mode: screen;
-      animation: orbMove 18s linear infinite;
-    }
-    .orb.orb2{background: radial-gradient(circle at 70% 30%, #ff4d8f 0%, #ffb86b 40%, transparent 70%);animation-duration:24s}
-    @keyframes orbMove{
-      0%{transform: translate(10vw,10vh) rotate(0deg)}
-      50%{transform: translate(70vw,30vh) rotate(180deg)}
-      100%{transform: translate(10vw,10vh) rotate(360deg)}
-    }
+    @keyframes waveFloat{0%,100%{transform: translateY(0) translateZ(-200px)}50%{transform: translateY(-16px) translateZ(-200px)}}
 
-    /* הֵרוֹ תלת־מימד */
-    .hero{
-      text-align:center;padding:5rem 1rem 3rem;
-      transform-style: preserve-3d;
-      animation: fadeInUp 1.2s ease-out both;
-    }
+    /* Hero 3D חלק */
+    .hero{ text-align:center; padding:5rem 1rem 3rem; transform-style:preserve-3d; animation:fadeInUp .9s ease-out both }
     .title3d{
-      display:inline-block;
-      font-size: clamp(2rem,5vw,4rem);
-      letter-spacing:1px;
-      text-shadow:
-        0 4px 0 rgba(0,0,0,0.25),
-        0 0 18px rgba(0,255,225,0.4),
-        0 0 36px rgba(255,77,143,0.35);
-      background: linear-gradient(90deg, #fff, #c6fff7 30%, #ffd3e5 60%, #fff 90%);
-      -webkit-background-clip: text;
-      background-clip:text;
-      color:transparent;
-      transform: rotateX(6deg) rotateY(-6deg) translateZ(30px);
-      animation: glowShift 4s ease-in-out infinite alternate;
+      display:inline-block; font-size: clamp(2rem,5vw,4rem);
+      letter-spacing:.6px; background: linear-gradient(90deg,#fff,#c6fff7 30%,#ffd3e5 60%,#fff 90%);
+      -webkit-background-clip:text; background-clip:text; color:transparent;
+      text-shadow: 0 2px 0 rgba(0,0,0,0.25), 0 0 18px rgba(0,255,225,.35), 0 0 28px rgba(255,77,143,.30);
+      transform: rotateX(5deg) rotateY(-6deg) translateZ(28px);
+      animation: glowShift 3.6s ease-in-out infinite alternate;
+      will-change:filter,transform;
     }
-    @keyframes glowShift{
-      from{filter: drop-shadow(0 0 6px #00ffe1)}
-      to{filter: drop-shadow(0 0 12px #ff4d8f)}
-    }
-    .hero p{
-      max-width:800px;margin:1rem auto 2rem;font-size:1.2rem;opacity:0.92;
-    }
+    .hero p{max-width:800px;margin:1rem auto 2rem;font-size:1.15rem;opacity:.92}
 
-    /* כפתורים וגלאסמורפיזם */
+    @keyframes glowShift{from{filter: drop-shadow(0 0 6px var(--accent2))}to{filter: drop-shadow(0 0 12px var(--accent))}}
+    @keyframes fadeInUp{from{opacity:0;transform:translate3d(0,16px,0)}to{opacity:1;transform:translate3d(0,0,0)}}
+
+    /* כפתורים חלקים עם GPU */
     .btn{
-      --shadow:0 10px 25px rgba(0,0,0,0.35);
-      display:inline-block; padding:0.9rem 1.4rem; border-radius:999px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
-      border:1px solid rgba(255,255,255,0.22);
-      color:#fff; text-decoration:none; margin:0.4rem; position:relative; overflow:hidden;
-      box-shadow: var(--shadow);
-      backdrop-filter: blur(10px);
-      transition: transform .25s ease, box-shadow .25s ease, background .25s ease;
-      cursor:pointer;
+      display:inline-block; padding:.9rem 1.4rem; border-radius:999px;
+      background: linear-gradient(135deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      border:1px solid rgba(255,255,255,.22); color:#fff; text-decoration:none;
+      margin:.4rem; position:relative; overflow:hidden; box-shadow: var(--shadow);
+      backdrop-filter: blur(10px); transition: transform .24s cubic-bezier(.2,.8,.2,1), box-shadow .24s;
+      cursor:pointer; will-change:transform;
     }
-    .btn.primary{background: linear-gradient(135deg, #ff4d8f, #ff7bb0); box-shadow: 0 8px 24px rgba(255,77,143,.45)}
-    .btn:hover{transform: translateY(-4px) rotateX(2deg) rotateY(-2deg)}
-    .btn:active{transform: translateY(0)}
+    .btn.primary{background: linear-gradient(135deg, var(--accent), #ff7bb0); box-shadow: 0 8px 24px rgba(255,77,143,.45)}
+    .btn:hover{transform: translate3d(0,-4px,0) rotateX(1.5deg) rotateY(-1.5deg)}
+    .btn:active{transform: translate3d(0,0,0)}
     /* Ripple */
     .btn::after{
-      content:"";position:absolute;width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,0.6);
-      transform:scale(1);opacity:0;pointer-events:none;
+      content:""; position:absolute; width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.6);
+      transform: translate3d(var(--rx,0), var(--ry,0), 0) scale(0); opacity:0; pointer-events:none;
+      transition: transform .6s ease, opacity .9s ease;
     }
+    .btn.rippling::after{ transform: translate3d(var(--rx,0), var(--ry,0), 0) scale(22); opacity:.2 }
 
-    /* גריד פיצ'רים עם אפקט Tilt תלת מימדי */
-    .features{
-      display:grid;grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
-      gap:1.2rem; margin:2rem 0 3rem;
-    }
+    /* כרטיסים עם Tilt חלק */
+    .features{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.2rem; margin:2rem 0 3rem }
     .card{
-      background: var(--glass); border:1px solid rgba(255,255,255,0.18);
-      border-radius:16px; padding:1.3rem;
-      backdrop-filter: blur(12px);
-      transform-style: preserve-3d;
-      transition: transform .25s ease, box-shadow .25s ease;
-      box-shadow: 0 8px 28px rgba(0,0,0,0.25);
-      position:relative; overflow:hidden;
+      background: var(--glass); border:1px solid rgba(255,255,255,.18);
+      border-radius:var(--radius); padding:1.3rem; backdrop-filter: blur(12px);
+      transform-style: preserve-3d; transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s;
+      box-shadow: 0 8px 28px rgba(0,0,0,.25); position:relative; overflow:hidden; will-change:transform;
     }
-    .card:hover{transform: rotateX(6deg) rotateY(-6deg) translateZ(12px); box-shadow: 0 16px 36px rgba(0,0,0,0.35)}
-    .card h3{margin:0 0 .6rem;font-size:1.3rem}
-    .card .spark{
-      position:absolute; inset:auto; right:-20px; top:-20px; font-size:2rem; opacity:0;
-      animation: sparkle 1.2s ease infinite; pointer-events:none;
-    }
-    .card:hover .spark{opacity:1}
-    @keyframes sparkle{
-      0%{transform: scale(.5) rotate(0deg); opacity:.0}
-      50%{transform: scale(1.25) rotate(180deg); opacity:.9}
-      100%{transform: scale(.5) rotate(360deg); opacity:.0}
-    }
+    .card:hover{ transform: rotateX(4deg) rotateY(-4deg) translateZ(12px); box-shadow: 0 16px 36px rgba(0,0,0,.35) }
+    .card h3{ margin:0 0 .6rem; font-size:1.25rem }
+    .spark{ position:absolute; right:-18px; top:-18px; font-size:1.8rem; opacity:0; animation: sparkle 1.2s ease infinite; pointer-events:none }
+    .card:hover .spark{ opacity:1 }
+    @keyframes sparkle{0%{transform: scale(.6) rotate(0deg); opacity:.0}50%{transform: scale(1.15) rotate(180deg); opacity:.85}100%{transform: scale(.6) rotate(360deg); opacity:.0}}
+
+    /* משימה ראשונה */
+    .task{ margin:3rem 0; padding:1.5rem; border-radius:var(--radius);
+      background: var(--glass-strong); border:1px solid rgba(255,255,255,.18); box-shadow: var(--shadow) }
+    .task h2{ margin:0 0 .6rem }
+    .task ol{ margin:.6rem 0 0; padding-inline-start:1.2rem }
+    .task li{ margin:.4rem 0 }
+    .task code{ background: rgba(0,0,0,.35); padding:.2rem .4rem; border-radius:8px; border:1px solid rgba(255,255,255,.15); display:inline-block; direction:ltr }
 
     /* מיני-משחק קלפים */
-    .game{
-      margin:2rem 0; text-align:center;
-    }
-    .game .deck{
-      display:flex;flex-wrap:wrap;gap:.8rem;justify-content:center;margin-top:1rem;
-    }
+    .game{ margin:2rem 0; text-align:center }
+    .deck{ display:flex; flex-wrap:wrap; gap:.8rem; justify-content:center; margin-top:1rem }
     .game-card{
       min-width:220px; max-width:280px; flex:1 1 240px;
-      background: var(--glass-strong);
-      border:1px solid rgba(255,255,255,0.22);
-      border-radius:14px; padding:1rem; text-align:right;
-      box-shadow: 0 10px 28px rgba(0,0,0,0.28);
-      transform-style: preserve-3d;
-      transition: transform .3s ease, box-shadow .3s ease;
+      background: var(--glass-strong); border:1px solid rgba(255,255,255,.22);
+      border-radius:14px; padding:1rem; text-align:right; box-shadow: 0 10px 28px rgba(0,0,0,.28);
+      transform-style: preserve-3d; transition: transform .22s cubic-bezier(.2,.8,.2,1), box-shadow .22s; will-change:transform,opacity;
     }
-    .game-card.show{transform: rotateY(0deg) translateZ(8px)}
-    .game-card.hide{transform: rotateY(90deg);opacity:.6}
+    .game-card.show{ transform: rotateY(0deg) translateZ(8px); opacity:1 }
+    .game-card.hide{ transform: rotateY(80deg); opacity:.65 }
+
     .xp{
       display:inline-flex; align-items:center; gap:.4rem;
       background: rgba(0,255,225,.15); border:1px solid rgba(0,255,225,.35);
-      color:#aafff5; border-radius:999px; padding:.2rem .6rem; font-weight:600; font-size:.95rem;
+      color:#aafff5; border-radius:999px; padding:.2rem .6rem; font-weight:600; font-size:.95rem
     }
 
-    /* הוראות משימה ראשונה */
-    .task{
-      margin:3rem 0; padding:1.5rem; border-radius:16px;
-      background: linear-gradient(135deg, rgba(255,255,255,0.12), rgba(255,255,255,0.06));
-      border:1px solid rgba(255,255,255,0.18);
-      box-shadow: 0 8px 28px rgba(0,0,0,0.25);
+    /* שיתוף + Leaderboard */
+    .share{ margin:2rem 0; text-align:center }
+    .share input{
+      min-width:280px; max-width:520px; width:60%; padding:.6rem; border-radius:12px;
+      border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.08); color:#fff; outline:none;
+      transition: box-shadow .2s ease; box-shadow: 0 0 0 0 rgba(255,255,255,0)
     }
-    .task h2{margin:0 0 .6rem}
-    .task ol{margin:.6rem 0 0; padding-inline-start:1.2rem}
-    .task li{margin:.4rem 0}
-    .task code{
-      background: rgba(0,0,0,0.35); padding:.2rem .4rem; border-radius:8px;
-      border:1px solid rgba(255,255,255,0.15);
-      display:inline-block; direction:ltr;
-    }
+    .share input:focus{ box-shadow: 0 0 0 3px rgba(0,255,225,.22) }
 
-    /* שיתוף + לוח מובילים */
-    .share{margin:2rem 0; text-align:center}
     .leaderboard{
       margin:2rem 0; padding:1.4rem; border-radius:16px;
-      background: var(--glass); border:1px solid rgba(255,255,255,0.18);
+      background: var(--glass); border:1px solid rgba(255,255,255,.18)
     }
-    .leaderboard h2{text-align:center;margin:.2rem 0 1rem}
-    .leaderboard ul{list-style:none;margin:0;padding:0;display:grid;gap:.4rem}
-    .leaderboard li{background: rgba(255,255,255,0.08); padding:.6rem .8rem; border-radius:12px}
+    .leaderboard h2{ text-align:center; margin:.2rem 0 1rem }
+    .leaderboard ul{ list-style:none; margin:0; padding:0; display:grid; gap:.4rem }
+    .leaderboard li{ background: rgba(255,255,255,.08); padding:.6rem .8rem; border-radius:12px }
 
     /* אדמין */
-    .admin{
-      margin:2.4rem 0; padding:1rem; border-radius:14px; background: rgba(255,255,255,0.10);
-      border:1px solid rgba(255,255,255,0.18);
-    }
-    .admin h2{margin:.2rem 0 1rem}
-    .admin-grid{display:grid;grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:.8rem}
-    .admin-card{background: rgba(255,255,255,0.08); padding:.8rem; border-radius:10px}
-    .admin small{opacity:.8}
+    .admin{ margin:2.4rem 0; padding:1rem; border-radius:14px; background: rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18) }
+    .admin h2{ margin:.2rem 0 1rem }
+    .admin-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:.8rem }
+    .admin-card{ background: rgba(255,255,255,.08); padding:.8rem; border-radius:10px }
+    .admin small{ opacity:.8 }
 
-    /* אנימציות כלליות */
-    @keyframes fadeInUp{
-      from{opacity:0; transform: translateY(18px)}
-      to{opacity:1; transform: translateY(0)}
-    }
+    @media (max-width:768px){ .container{padding:1rem} .title3d{ transform: rotateX(4deg) rotateY(-3deg) translateZ(18px) } }
 
-    /* רספונסיביות */
-    @media (max-width:768px){
-      .container{padding:1rem}
-      .title3d{transform: rotateX(4deg) rotateY(-3deg) translateZ(18px)}
+    /* נגישות: הפחתת תנועה */
+    @media (prefers-reduced-motion: reduce){
+      *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important }
     }
   </style>
 </head>
 <body>
-  <!-- רקע מגניב רב־שכבתי -->
+  <!-- רקע חלק -->
   <div class="bg">
     <canvas id="particles"></canvas>
     <div class="wave"></div>
@@ -223,26 +169,29 @@
   <div class="container">
     <section class="hero">
       <h1 class="title3d">🎮 Rene — מערכת לימוד תכנות משחקית</h1>
-      <p>למדו לתכנת דרך משחקים, משימות, ניקוד וקלפי אתגר. פותחים פרויקט ראשון בגיטהאב, משיגים נקודות, ומשתפים את דף הנחיתה שלכם לחברים!</p>
+      <p>פותחים פרויקט ראשון בגיטהאב, צוברים XP, מזמינים חברים עם לינק אישי ומחברים את דף הנחיתה שלכם — הכל במקום אחד ובאנימציות חלקות.</p>
 
-      <!-- הורדת הכפתור "התחל ללמוד עכשיו" בהתאם לבקשה -->
-      <!-- החלפת "צפו בקוד ב-GitHub" ל"הרשמה" ו"פתיחת פרויקט" -->
+      <!-- הוסר "התחל ללמוד עכשיו"; נוספו הרשמה/פתיחת פרויקט/חיבור -->
       <div>
         <a class="btn primary" href="https://github.com/signup" target="_blank" rel="noopener" data-track="signup">🧑‍🚀 הירשם לגיטהאב</a>
         <a class="btn" href="https://github.com/new" target="_blank" rel="noopener" data-track="newrepo">📦 פתח את הפרויקט הראשון שלך</a>
         <button class="btn" id="connectRepoBtn" title="חיבור דף הנחיתה לפרויקט שלך">🔗 חבר את הדף לפרויקט שלך</button>
       </div>
+      <div style="margin-top:.6rem">
+        <button class="btn" id="inviteBtn" title="לינק הזמנה אישי לחבר">🎟️ צור לינק הזמנה</button>
+        <span class="xp" id="xpBadge">XP: 0</span>
+      </div>
     </section>
 
     <!-- פיצ'רים -->
     <section class="features">
-      <div class="card"><h3>👨‍💻 למידה חווייתית</h3><p>תכנות דרך משחקים, אתגרים וניקוד — בלי שיעורים משעממים.</p><div class="spark">✨</div></div>
-      <div class="card"><h3>🎯 משימות מעשיות</h3><p>כל צעד מתורגם לקוד אמיתי שרץ בדפדפן ובמחשב.</p><div class="spark">✨</div></div>
+      <div class="card"><h3>👨‍💻 למידה חווייתית</h3><p>משחקיות, אתגרים ונקודות — בלי שיעורים משעממים.</p><div class="spark">✨</div></div>
+      <div class="card"><h3>🎯 משימות מעשיות</h3><p>כל צעד = קוד אמיתי שרץ בדפדפן ובמחשב.</p><div class="spark">✨</div></div>
       <div class="card"><h3>🃏 אוסף קלפים</h3><p>גרלו קלפי אתגר/טיפים והרוויחו XP לכל משימה.</p><div class="spark">✨</div></div>
-      <div class="card"><h3>📈 מעקב התקדמות</h3><p>XP, משימות, ושיתופים — הכל נרשם ומעודכן.</p><div class="spark">✨</div></div>
+      <div class="card"><h3>📈 מעקב ושיתופים</h3><p>מתעדכן בזמן אמת: משימות, XP ושיתופים.</p><div class="spark">✨</div></div>
     </section>
 
-    <!-- משימה ראשונה: פתיחת פרויקט ראשון -->
+    <!-- משימה ראשונה -->
     <section class="task" id="firstTask">
       <h2>🚀 משימה #1 — הפרויקט הראשון שלך בגיטהאב</h2>
       <p>העמוד הזה יהיה דף הנחיתה הראשון שלך! תוך כמה דקות יהיה לך פרויקט בגיטהאב עם דף שכולם יכולים לראות.</p>
@@ -251,8 +200,8 @@
         <li><strong>צור ריפו חדש:</strong> לחץ על <a href="https://github.com/new" target="_blank" rel="noopener">פתיחת פרויקט חדש</a>.</li>
         <li><strong>שם הריפו:</strong> בחר שם קליט, למשל <code>rene-first-project</code>.</li>
         <li><strong>העלה את הקובץ הזה:</strong> פתח את הריפו ולחץ על <em>Add file → Create new file</em> או <em>Upload files</em>, והדבק/העלה את הקובץ הזה בשם <code>index.html</code>.</li>
-        <li><strong>הפעל GitHub Pages:</strong> בעמוד הריפו → <em>Settings</em> → <em>Pages</em> → Source: <em>Deploy from a branch</em>, Branch: <em>main</em>, Folder: <em>root</em>. שמור — תקבל כתובת URL של הדף שלך.</li>
-        <li><strong>חבר את הדף כאן:</strong> לחץ על הכפתור "<em>חבר את הדף לפרויקט שלך</em>" והדבק את ה־URL שקיבלת. זה יעניק לך XP ויאפשר שיתוף מהיר.</li>
+        <li><strong>הפעל GitHub Pages:</strong> Settings → Pages → Source: Deploy from a branch, Branch: main, Folder: root. שמור — תקבל כתובת URL של הדף שלך.</li>
+        <li><strong>חבר את הדף כאן:</strong> לחץ על "<em>חבר את הדף לפרויקט שלך</em>" והדבק את ה־URL שקיבלת. זה יעניק לך XP ויאפשר שיתוף מהיר.</li>
       </ol>
       <p class="xp">+50 XP על פתיחת הפרויקט הראשון</p>
     </section>
@@ -262,7 +211,6 @@
       <h2>🎲 גרילת קלף תכנות</h2>
       <div>
         <button class="btn primary" id="drawCardBtn">גריל קלף!</button>
-        <span class="xp" id="xpBadge">XP: 0</span>
       </div>
       <div class="deck" id="deck"></div>
     </section>
@@ -270,16 +218,16 @@
     <!-- שיתוף -->
     <section class="share">
       <h2>🔗 שתפו את העמוד שלכם</h2>
-      <p>אחרי שחיברתם את דף הנחיתה, שתפו אותו עם חברים וקבלו עוד XP על כל כניסה!</p>
+      <p>אחרי שחיברתם את דף הנחיתה, שתפו אותו עם חברים וקבלו עוד XP על כל הצטרפות!</p>
       <div>
-        <input id="shareUrl" type="text" placeholder="הדביקו כאן את כתובת הדף שלכם (GitHub Pages)" style="min-width:280px;max-width:520px;width:60%;padding:.6rem;border-radius:12px;border:1px solid rgba(255,255,255,0.25);background:rgba(255,255,255,0.08);color:#fff"/>
+        <input id="shareUrl" type="text" placeholder="הדביקו כאן את כתובת הדף שלכם (GitHub Pages)"/>
         <button class="btn" id="saveShareUrl">💾 שמור כתובת</button>
         <button class="btn" id="copyShareUrl">📣 העתק קישור לשיתוף</button>
       </div>
       <p class="xp" style="margin-top:.8rem">+10 XP על שיתוף ראשון</p>
     </section>
 
-    <!-- לוח מובילים דמה (לייב מתוך localStorage) -->
+    <!-- Leaderboard -->
     <section class="leaderboard">
       <h2>🏆 לוח מובילים</h2>
       <ul id="leaderList">
@@ -287,37 +235,20 @@
         <li>🥈 יואב — 95 XP</li>
         <li>🥉 דנה — 80 XP</li>
       </ul>
-      <small style="opacity:.75">הנתונים מתעדכנים מקומית. בגרסה מלאה יהיה סנכרון לשרת.</small>
+      <small style="opacity:.75">בגרסה זו — סנכרון אמיתי עם השרת הזמין.</small>
     </section>
 
-    <!-- אדמין: מעקב הפצה והתקדמות -->
+    <!-- אדמין -->
     <section class="admin" id="adminPanel" style="display:none">
       <h2>🛠️ אדמין — מעקב הפצה והתקדמות</h2>
       <div class="admin-grid">
-        <div class="admin-card">
-          <strong>תלמידים מזוהים מקומית</strong>
-          <div id="adminStudentsCount">0</div>
-          <small>מס׳ פרופילים ששמרו URL</small>
-        </div>
-        <div class="admin-card">
-          <strong>שיתופים שבוצעו</strong>
-          <div id="adminShares">0</div>
-          <small>לחיצות "העתק קישור לשיתוף"</small>
-        </div>
-        <div class="admin-card">
-          <strong>XP מצטבר</strong>
-          <div id="adminTotalXP">0</div>
-          <small>סך כל נקודות לפי localStorage</small>
-        </div>
-        <div class="admin-card">
-          <strong>משימות שהושלמו</strong>
-          <div id="adminTasks">0</div>
-          <small>כולל פתיחת ריפו וחיבור דף</small>
-        </div>
+        <div class="admin-card"><strong>תלמידים</strong><div id="adminStudentsCount">0</div><small>נרשמו והזינו URL</small></div>
+        <div class="admin-card"><strong>שיתופים</strong><div id="adminShares">0</div><small>העתקות קישור ושיתופים רשומים</small></div>
+        <div class="admin-card"><strong>XP מצטבר</strong><div id="adminTotalXP">0</div><small>סכום לפי שרת</small></div>
+        <div class="admin-card"><strong>משימות הושלמו</strong><div id="adminTasks">0</div><small>פתיחת ריפו + חיבור דף</small></div>
       </div>
       <div style="margin-top:.8rem">
         <button class="btn" id="exportData">⬇️ ייצא נתונים (JSON)</button>
-        <button class="btn" id="resetData">🧹 איפוס מקומי</button>
       </div>
       <small style="display:block;margin-top:.6rem;opacity:.75">כדי לפתוח את פאנל האדמין: הוסיפו ?admin=1 ל־URL של העמוד.</small>
     </section>
@@ -330,39 +261,137 @@
   <audio id="popSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
 
   <script>
-    /* מערכת XP ונתונים מקומיים */
-    const STORE_KEY = 'rene_app';
-    const DEFAULT_DATA = {
-      xp: 0,
-      tasks: { firstRepo: false, connectedLanding: false, firstShare: false },
-      shareUrl: '',
-      sharesCount: 0,
-      studentsCount: 0, // דמה: נספר מספר פעמים שהוזן URL שונה
-      history: []
+    /* הגדרות API — התאמה לסביבה שלך */
+    const API_BASE = (typeof window !== 'undefined' && window.location && window.location.origin) || 'https://rene-production.up.railway.app';
+    const ENDPOINTS = {
+      signup: API_BASE + '/api/signup',            // POST {referrerId?}
+      newRepo: API_BASE + '/api/tasks/first-repo', // POST {userId}
+      connectLanding: API_BASE + '/api/tasks/connect-landing', // POST {userId, url}
+      shareCreate: API_BASE + '/api/share',        // POST {userId, url}
+      shareCopy: API_BASE + '/api/share/copy',     // POST {userId}
+      inviteLink: API_BASE + '/api/invite',        // POST {userId} -> {inviteUrl}
+      progress: API_BASE + '/api/progress',        // GET -> {xp, tasks, shares, students}
+      leaderboard: API_BASE + '/api/leaderboard',  // GET -> [{name,xp}]
+      referral: API_BASE + '/api/referral'         // POST {referrerId, newUserFingerprint}
     };
+    /* הערה: אם יש לך כבר מסלולי API קיימים (Next.js / Supabase), כוון אותם כאן לשמות בפועל. */
+
+    /* זיהוי משתמש מקומי ופינגרפרינט דמה */
+    const STORE_KEY = 'rene_app';
+    const DEFAULT_DATA = { userId: null, xp: 0, tasks: { firstRepo:false, connectedLanding:false, firstShare:false }, shareUrl:'', inviteUrl:'', history:[] };
     const SFX = document.getElementById('popSound');
 
+    function guid(){ return 'u_' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
     function load(){
-      try{
-        const raw = localStorage.getItem(STORE_KEY);
-        return raw ? JSON.parse(raw) : { ...DEFAULT_DATA };
-      }catch(e){ return { ...DEFAULT_DATA }; }
+      try{ const raw = localStorage.getItem(STORE_KEY); return raw ? JSON.parse(raw) : {...DEFAULT_DATA}; }
+      catch(e){ return {...DEFAULT_DATA}; }
     }
-    function save(data){
-      localStorage.setItem(STORE_KEY, JSON.stringify(data));
-      render();
+    function save(d){ localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
+
+    async function ensureUser(){
+      const d = load();
+      if(!d.userId){
+        d.userId = guid();
+        save(d);
+        // הרשמה לוגית בשרת (אופציונלי)
+        try{
+          const referrerId = new URLSearchParams(location.search).get('ref');
+          await fetch(ENDPOINTS.signup, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId: d.userId, referrerId }) });
+        }catch(err){}
+      }
+      return d.userId;
     }
-    function addXP(data, amount, reason){
-      data.xp += amount;
-      data.history.push({ t: Date.now(), xp:+amount, reason });
-      save(data);
-      pulseXP();
+
+    function setXP(xp){ const badge = document.getElementById('xpBadge'); badge.textContent = 'XP: ' + xp; badge.style.transform = 'scale(1.06)'; setTimeout(()=> badge.style.transform='scale(1)', 200); }
+
+    /* חלקיקים חלקים — פחות נקודות, קווים בתנאי, rAF */
+    function particles(){
+      const canvas = document.getElementById('particles');
+      const ctx = canvas.getContext('2d');
+      let w = canvas.width = window.innerWidth;
+      let h = canvas.height = window.innerHeight;
+      let dpr = window.devicePixelRatio || 1;
+      canvas.width = w * dpr; canvas.height = h * dpr; ctx.scale(dpr,dpr);
+
+      window.addEventListener('resize', ()=>{
+        w = canvas.width = window.innerWidth;
+        h = canvas.height = window.innerHeight;
+        canvas.width = w * dpr; canvas.height = h * dpr; ctx.setTransform(1,0,0,1,0,0); ctx.scale(dpr,dpr);
+      });
+
+      const PCOUNT = 68;
+      const ps = new Array(PCOUNT).fill(0).map(()=>({
+        x: Math.random()*w, y: Math.random()*h,
+        r: Math.random()*1.7 + 0.7,
+        vx: (Math.random()-0.5)*0.32,
+        vy: (Math.random()-0.5)*0.32,
+        c: Math.random()<.5 ? 'rgba(0,255,225,.7)' : 'rgba(255,77,143,.65)'
+      }));
+      function step(){
+        ctx.clearRect(0,0,w,h);
+        for(const p of ps){
+          p.x += p.vx; p.y += p.vy;
+          if(p.x<0||p.x>w) p.vx*=-1;
+          if(p.y<0||p.y>h) p.vy*=-1;
+          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fillStyle = p.c; ctx.fill();
+        }
+        // קווים רק כאשר קרוב ובטווח
+        for(let i=0;i<PCOUNT;i++){
+          const a=ps[i];
+          for(let j=i+1;j<PCOUNT;j++){
+            const b=ps[j];
+            const dx=a.x-b.x, dy=a.y-b.y, dist2 = dx*dx + dy*dy;
+            if(dist2 < 110*110){
+              ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+              ctx.lineWidth = 0.5; ctx.beginPath(); ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
+            }
+          }
+        }
+        requestAnimationFrame(step);
+      }
+      step();
     }
-    function pulseXP(){
-      const badge = document.getElementById('xpBadge');
-      badge.style.transform = 'scale(1.08)';
-      setTimeout(()=> badge.style.transform = 'scale(1)', 220);
+
+    /* Tilt חלק על פי עכבר */
+    function tilt3D(){
+      const hero = document.querySelector('.hero');
+      const cards = ()=> document.querySelectorAll('.card, .game-card');
+      let ticking = false;
+      function onMove(e){
+        if(ticking) return;
+        ticking = true;
+        requestAnimationFrame(()=>{
+          const tilt = (el)=>{
+            const rect = el.getBoundingClientRect();
+            const cx = rect.left + rect.width/2;
+            const cy = rect.top + rect.height/2;
+            const dx = (e.clientX - cx)/rect.width;
+            const dy = (e.clientY - cy)/rect.height;
+            el.style.transform = `rotateX(${dy*-4}deg) rotateY(${dx*4}deg) translateZ(12px)`;
+          };
+          tilt(hero);
+          cards().forEach(c=> tilt(c));
+          ticking = false;
+        });
+      }
+      document.addEventListener('mousemove', onMove, {passive:true});
+      document.addEventListener('mouseleave', ()=>{
+        hero.style.transform=''; cards().forEach(c=> c.style.transform='');
+      });
     }
+
+    /* Ripple חלק */
+    document.addEventListener('click', (e)=>{
+      const btn = e.target.closest('.btn');
+      if(!btn) return;
+      const rect = btn.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      btn.style.setProperty('--rx', x+'px');
+      btn.style.setProperty('--ry', y+'px');
+      btn.classList.add('rippling');
+      setTimeout(()=> btn.classList.remove('rippling'), 300);
+    }, {passive:true});
 
     /* קלפים ואתגרים */
     const cards = [
@@ -372,14 +401,6 @@
       { title:"🚀 לולאה 1→10", text:"צרו לולאה שמדפיסה את המספרים 1 עד 10." , xp:5 },
       { title:"🎨 צבע רקע דינמי", text:"דף שמשנה רקע כל 2 שניות עם JS." , xp:10 }
     ];
-    function drawCard(){
-      const data = load();
-      const i = Math.floor(Math.random() * cards.length);
-      const c = cards[i];
-      addXP(data, c.xp, 'draw_card:'+c.title);
-      SFX.currentTime = 0; SFX.play();
-      showCard(c);
-    }
     function showCard(card){
       const deck = document.getElementById('deck');
       const el = document.createElement('div');
@@ -392,232 +413,181 @@
         <div>${card.text}</div>
       `;
       deck.prepend(el);
-      requestAnimationFrame(()=> {
-        el.classList.remove('hide');
-        el.classList.add('show');
-      });
+      requestAnimationFrame(()=>{ el.classList.remove('hide'); el.classList.add('show'); });
     }
 
-    /* Ripple אפקט לכפתורים */
-    document.addEventListener('click', (e)=>{
-      const btn = e.target.closest('.btn');
-      if(!btn) return;
-      const rect = btn.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      btn.style.setProperty('--rx', x+'px');
-      btn.style.setProperty('--ry', y+'px');
-      const after = btn;
-      if(after){
-        after.style.setProperty('--ripple-x', x);
-        after.style.setProperty('--ripple-y', y);
-        btn.style.setProperty('--ripple', 1);
-        btn.style.setProperty('--ripple', 0);
-      }
+    async function drawCard(){
+      const d = load();
+      const i = Math.floor(Math.random() * cards.length);
+      const c = cards[i];
+      SFX.currentTime = 0; SFX.play();
+      showCard(c);
+      try{
+        await fetch(ENDPOINTS.progress, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, xp:c.xp, event:'draw_card', title:c.title }) });
+        await refreshProgress();
+      }catch(err){}
+    }
+
+    /* משימה ראשונה: סימון פתיחת ריפו */
+    document.querySelectorAll('[data-track]').forEach(el=>{
+      el.addEventListener('click', async ()=>{
+        const d = load();
+        const action = el.getAttribute('data-track');
+        await ensureUser();
+        if(action === 'signup'){
+          try{ await fetch(ENDPOINTS.signup, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId }) }); }catch(err){}
+        }
+        if(action === 'newrepo' && !d.tasks.firstRepo){
+          d.tasks.firstRepo = true; save(d);
+          try{ await fetch(ENDPOINTS.newRepo, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId }) }); await refreshProgress(); }catch(err){}
+          setTimeout(()=> alert('כל הכבוד! +50 XP על פתיחת הפרויקט הראשון 🎉'), 30);
+        }
+      }, {passive:true});
     });
 
-    /* שיתוף וניהול URL של התלמיד */
+    /* חיבור דף נחיתה */
     const connectBtn = document.getElementById('connectRepoBtn');
+    connectBtn.addEventListener('click', async ()=>{
+      const url = prompt('הדביקו כאן את כתובת GitHub Pages של הפרויקט שלכם:');
+      if(!url) return;
+      await ensureUser();
+      const d = load();
+      d.shareUrl = url.trim(); d.tasks.connectedLanding = true; save(d);
+      document.getElementById('shareUrl').value = d.shareUrl;
+      try{
+        await fetch(ENDPOINTS.connectLanding, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, url: d.shareUrl }) });
+        await refreshProgress();
+      }catch(err){}
+      alert('הדף חובר בהצלחה! תוכלו לשתף אותו ולצבור XP.');
+    });
+
+    /* שמירת/העתקת כתובת שיתוף */
     const saveShareBtn = document.getElementById('saveShareUrl');
     const copyShareBtn = document.getElementById('copyShareUrl');
     const shareInput = document.getElementById('shareUrl');
 
-    connectBtn.addEventListener('click', ()=>{
-      const url = prompt('הדביקו כאן את כתובת GitHub Pages של הפרויקט שלכם:');
-      if(!url) return;
-      const data = load();
-      const wasEmpty = !data.shareUrl;
-      data.shareUrl = url.trim();
-      data.tasks.connectedLanding = true;
-      if(wasEmpty) data.studentsCount += 1; // דמה: נחשיב זאת כתלמיד חדש שמזוהה
-      addXP(data, 30, 'connect_landing');
-      alert('הדף חובר בהצלחה! תוכלו לשתף אותו ולצבור XP.');
-      shareInput.value = data.shareUrl;
-      save(data);
-    });
-
-    saveShareBtn.addEventListener('click', ()=>{
+    saveShareBtn.addEventListener('click', async ()=>{
       const val = (shareInput.value || '').trim();
       if(!val){ alert('נא להזין כתובת תקינה של GitHub Pages.'); return; }
-      const data = load();
-      const wasEmpty = !data.shareUrl;
-      data.shareUrl = val;
-      data.tasks.connectedLanding = true;
-      if(wasEmpty) data.studentsCount += 1;
-      addXP(data, 10, 'save_share_url');
-      save(data);
+      await ensureUser();
+      const d = load();
+      d.shareUrl = val; d.tasks.connectedLanding = true; save(d);
+      try{
+        await fetch(ENDPOINTS.connectLanding, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, url: d.shareUrl }) });
+        await refreshProgress();
+      }catch(err){}
       alert('נשמר! עכשיו אפשר לשתף בקליק.');
     });
 
     copyShareBtn.addEventListener('click', async ()=>{
-      const data = load();
-      if(!data.shareUrl){ alert('אין כתובת שמורה. הזינו את כתובת ה־GitHub Pages שלכם.'); return; }
+      const d = load();
+      if(!d.shareUrl){ alert('אין כתובת שמורה. הזינו את כתובת ה־GitHub Pages שלכם.'); return; }
       try{
-        await navigator.clipboard.writeText(data.shareUrl);
-        data.sharesCount += 1;
-        if(!data.tasks.firstShare){ data.tasks.firstShare = true; addXP(data, 10, 'first_share'); }
-        save(data);
-        alert('הקישור הועתק! שתפו אותו בקבוצות, בווטסאפ ובכל מקום 😉');
-      }catch(e){
-        alert('לא הצלחתי להעתיק. נסו ידנית.');
+        await navigator.clipboard.writeText(d.shareUrl);
+        await ensureUser();
+        await fetch(ENDPOINTS.shareCopy, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId }) });
+        // XP לשיתוף ראשון — מהשרת
+        await refreshProgress();
+        alert('הקישור הועתק! שתפו אותו בווטסאפ/קבוצות 😉');
+      }catch(err){ alert('לא הצלחתי להעתיק. נסו ידנית.'); }
+    });
+
+    /* לינק הזמנה אישי — כל חבר חדש מגיע עם ?ref=<userId> */
+    const inviteBtn = document.getElementById('inviteBtn');
+    inviteBtn.addEventListener('click', async ()=>{
+      await ensureUser();
+      const d = load();
+      try{
+        const res = await fetch(ENDPOINTS.inviteLink, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId }) });
+        const j = await res.json();
+        const url = j.inviteUrl || (location.origin + location.pathname + '?ref=' + d.userId);
+        d.inviteUrl = url; save(d);
+        await navigator.clipboard.writeText(url);
+        alert('לינק ההזמנה הועתק! שלחו לחברים: ' + url);
+      }catch(err){
+        const url = location.origin + location.pathname + '?ref=' + d.userId;
+        d.inviteUrl = url; save(d);
+        await navigator.clipboard.writeText(url);
+        alert('לינק ההזמנה הועתק! שלחו לחברים: ' + url);
       }
     });
 
-    /* מעקב משימה ראשונה: סימון פתיחת ריפו */
-    document.querySelectorAll('[data-track]').forEach(el=>{
-      el.addEventListener('click', (e)=>{
-        const data = load();
-        const action = el.getAttribute('data-track');
-        if(action === 'signup'){
-          addXP(data, 5, 'signup_click');
-        }
-        if(action === 'newrepo'){
-          if(!data.tasks.firstRepo){
-            data.tasks.firstRepo = true;
-            addXP(data, 50, 'first_repo');
-            save(data);
-            setTimeout(()=> alert('כל הכבוד! +50 XP על פתיחת הפרויקט הראשון 🎉'), 50);
-          }
-        }
-      });
-    });
-
-    /* Leaderboard דינמי דמה: הוספת תלמיד מקומי */
-    function renderLeaderboard(){
-      const data = load();
-      const list = document.getElementById('leaderList');
-      const meName = 'אתם';
-      const myItem = `🔹 ${meName} — ${data.xp} XP`;
-      const base = [
-        '🥇 נועה — 120 XP',
-        '🥈 יואב — 95 XP',
-        '🥉 דנה — 80 XP',
-      ];
-      const idx = 2; // נכניס לפני המקום השלישי
-      const arr = [...base.slice(0, idx), myItem, ...base.slice(idx)];
-      list.innerHTML = arr.map(x=> `<li>${x}</li>`).join('');
-    }
-
-    /* אדמין: הצגת פאנל כאשר יש ?admin=1 */
-    function isAdmin(){
+    /* רישום הצטרפות חבר חדש (referral) */
+    async function captureReferral(){
       const params = new URLSearchParams(location.search);
-      return params.get('admin') === '1';
+      const ref = params.get('ref');
+      if(!ref) return;
+      const myFingerprint = guid();
+      try{
+        await fetch(ENDPOINTS.referral, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ referrerId: ref, newUserFingerprint: myFingerprint }) });
+      }catch(err){}
     }
-    function renderAdmin(){
+
+    /* Leaderboard אמיתי מהשרת */
+    async function renderLeaderboardServer(){
+      try{
+        const res = await fetch(ENDPOINTS.leaderboard);
+        const list = document.getElementById('leaderList');
+        if(!res.ok) throw new Error('leaderboard not ok');
+        const arr = await res.json();
+        list.innerHTML = arr.map(x=> `<li>${x.rankIcon || '🔹'} ${x.name} — ${x.xp} XP</li>`).join('');
+      }catch(err){
+        // אם נכשל, נמשיך עם ברירת־מחדל
+      }
+    }
+
+    /* אדמין: נתוני התקדמות מהשרת */
+    function isAdmin(){ return new URLSearchParams(location.search).get('admin') === '1'; }
+    async function renderAdmin(){
       const panel = document.getElementById('adminPanel');
       if(!isAdmin()){ panel.style.display='none'; return; }
       panel.style.display='block';
-      const data = load();
-      const totalXP = data.xp;
-      const tasksDone = Object.values(data.tasks).filter(Boolean).length;
-      document.getElementById('adminStudentsCount').textContent = data.studentsCount;
-      document.getElementById('adminShares').textContent = data.sharesCount;
-      document.getElementById('adminTotalXP').textContent = totalXP;
-      document.getElementById('adminTasks').textContent = tasksDone;
-
-      document.getElementById('exportData').onclick = ()=>{
-        const blob = new Blob([JSON.stringify(load(), null, 2)], {type:'application/json'});
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url; a.download = 'rene_local_data.json'; a.click();
-        URL.revokeObjectURL(url);
-      };
-      document.getElementById('resetData').onclick = ()=>{
-        if(confirm('לאפס את הנתונים המקומיים?')){ localStorage.removeItem(STORE_KEY); location.reload(); }
-      };
+      try{
+        const res = await fetch(ENDPOINTS.progress);
+        const data = await res.json();
+        document.getElementById('adminStudentsCount').textContent = data.students || 0;
+        document.getElementById('adminShares').textContent = data.shares || 0;
+        document.getElementById('adminTotalXP').textContent = data.totalXP || 0;
+        document.getElementById('adminTasks').textContent = data.tasksCompleted || 0;
+        document.getElementById('exportData').onclick = async ()=>{
+          const res2 = await fetch(ENDPOINTS.progress + '?export=1');
+          const blob = await res2.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = 'rene_server_data.json'; a.click();
+          URL.revokeObjectURL(url);
+        };
+      }catch(err){}
     }
 
-    /* עדכון תצוגה */
-    function render(){
-      const data = load();
-      document.getElementById('xpBadge').textContent = 'XP: ' + data.xp;
-      if(data.shareUrl) document.getElementById('shareUrl').value = data.shareUrl;
-      renderLeaderboard();
-      renderAdmin();
+    /* רענון XP/מצב מהשרת */
+    async function refreshProgress(){
+      try{
+        const res = await fetch(ENDPOINTS.progress);
+        const j = await res.json();
+        setXP(j.xp || 0);
+      }catch(err){}
     }
-
-    /* חלקיקים רקע (Canvas) */
-    function particles(){
-      const canvas = document.getElementById('particles');
-      const ctx = canvas.getContext('2d');
-      let w, h, dpr;
-      function resize(){
-        w = canvas.width = window.innerWidth;
-        h = canvas.height = window.innerHeight;
-        dpr = window.devicePixelRatio || 1;
-        canvas.width = w * dpr;
-        canvas.height = h * dpr;
-        ctx.scale(dpr, dpr);
-      }
-      resize(); window.addEventListener('resize', resize);
-
-      const PCOUNT = 90;
-      const ps = new Array(PCOUNT).fill(0).map(()=>({
-        x: Math.random()*w,
-        y: Math.random()*h,
-        r: Math.random()*2 + 0.6,
-        vx: (Math.random()-0.5)*0.4,
-        vy: (Math.random()-0.5)*0.4,
-        c: Math.random()<.5 ? 'rgba(0,255,225,.7)' : 'rgba(255,77,143,.7)'
-      }));
-      function step(){
-        ctx.clearRect(0,0,w,h);
-        for(const p of ps){
-          p.x += p.vx; p.y += p.vy;
-          if(p.x<0||p.x>w) p.vx*=-1;
-          if(p.y<0||p.y>h) p.vy*=-1;
-          ctx.beginPath();
-          ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
-          ctx.fillStyle = p.c;
-          ctx.fill();
-        }
-        // קווי חיבור דקים
-        for(let i=0;i<PCOUNT;i++){
-          for(let j=i+1;j<PCOUNT;j++){
-            const a=ps[i], b=ps[j];
-            const dist = Math.hypot(a.x-b.x, a.y-b.y);
-            if(dist<110){
-              ctx.strokeStyle = 'rgba(255,255,255,0.06)';
-              ctx.lineWidth = 0.6;
-              ctx.beginPath();
-              ctx.moveTo(a.x,a.y); ctx.lineTo(b.x,b.y); ctx.stroke();
-            }
-          }
-        }
-        requestAnimationFrame(step);
-      }
-      step();
-    }
-
-    /* הטיות 3D עדינות לפי עכבר */
-    function tilt3D(){
-      const hero = document.querySelector('.hero');
-      const cards = document.querySelectorAll('.card, .game-card');
-      function tilt(el, e){
-        const rect = el.getBoundingClientRect();
-        const cx = rect.left + rect.width/2;
-        const cy = rect.top + rect.height/2;
-        const dx = (e.clientX - cx)/rect.width;
-        const dy = (e.clientY - cy)/rect.height;
-        el.style.transform = `rotateX(${dy*-6}deg) rotateY(${dx*6}deg) translateZ(12px)`;
-      }
-      document.addEventListener('mousemove', (e)=>{
-        tilt(hero, e);
-        cards.forEach(c=> tilt(c, e));
-      });
-      document.addEventListener('mouseleave', ()=>{
-        hero.style.transform = '';
-        cards.forEach(c=> c.style.transform = '');
-      });
-    }
-
-    /* אירועים */
-    document.getElementById('drawCardBtn').addEventListener('click', drawCard);
 
     /* אתחול */
-    particles();
-    tilt3D();
-    render();
+    (async function init(){
+      await ensureUser();
+      await captureReferral();
+      particles();
+      tilt3D();
+      await refreshProgress();
+      await renderLeaderboardServer();
+
+      // טעינת כתובת דף אם קיימת
+      const d = load();
+      if(d.shareUrl) document.getElementById('shareUrl').value = d.shareUrl;
+
+      // אירוע גרילת קלף
+      document.getElementById('drawCardBtn').addEventListener('click', drawCard);
+
+      // אדמין
+      await renderAdmin();
+    })();
   </script>
 </body>
 </html>
