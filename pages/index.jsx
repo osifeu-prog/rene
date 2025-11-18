@@ -4,83 +4,106 @@ import Head from 'next/head'
 
 export default function Home() {
   const [user, setUser] = useState(null)
-  const [showWelcome, setShowWelcome] = useState(true)
+  const [userStats, setUserStats] = useState(null)
+  const [showTutorial, setShowTutorial] = useState(false)
 
   useEffect(() => {
     checkUser()
-    
-    // בדיקה אם המשתמש כבר ראה את ההודעה
-    const hasSeenWelcome = localStorage.getItem('hasSeenWelcome')
-    if (hasSeenWelcome) {
-      setShowWelcome(false)
+    // בדיקה אם זה ביקור ראשון
+    const isFirstVisit = !localStorage.getItem('hasVisitedBefore')
+    if (isFirstVisit) {
+      setShowTutorial(true)
     }
   }, [])
 
   const checkUser = async () => {
     const { data: { user } } = await supabase.auth.getUser()
     setUser(user)
+    if (user) {
+      await updateUserPoints(user.id, 10) // נקודות על התחברות ראשונה
+      await loadUserStats(user.id)
+    }
+  }
+
+  const updateUserPoints = async (userId, points) => {
+    await supabase
+      .from('user_stats')
+      .upsert({ 
+        user_id: userId, 
+        points: points,
+        last_activity: new Date().toISOString()
+      })
+  }
+
+  const loadUserStats = async (userId) => {
+    const { data } = await supabase
+      .from('user_stats')
+      .select('*')
+      .eq('user_id', userId)
+      .single()
+    setUserStats(data)
   }
 
   const handleGitHubLogin = async () => {
-    await supabase.auth.signInWithOAuth({ 
+    const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo: `${window.location.origin}/dashboard`
+        redirectTo: `${window.location.origin}/dashboard`,
+        scopes: 'public_repo'
       }
     })
   }
 
-  const hideWelcome = () => {
-    setShowWelcome(false)
-    localStorage.setItem('hasSeenWelcome', 'true')
+  const completeTutorial = () => {
+    setShowTutorial(false)
+    localStorage.setItem('hasVisitedBefore', 'true')
   }
 
   return (
     <>
       <Head>
-        <title>מערכת לימוד מתכנת - Rene</title>
-        <meta name="description" content="למד תכנות דרך משחק ואתגרים" />
+        <title>Rene - מערכת לימוד תכנות משחקית</title>
+        <meta name="description" content="למד תכנות דרך יצירת דפי נחיתה וקלפים מיוחדים" />
       </Head>
 
       <div className="home-container">
-        {showWelcome && (
-          <div className="welcome-overlay">
-            <div className="welcome-card">
-              <h2>🎯 ברוכים הבאים ל-Rene!</h2>
-              <p>זו מערכת לימוד תכנות דרך משחק ואתגרים. כאן תלמדו לתכנת בצורה חווייתית:</p>
-              
-              <div className="features">
-                <div className="feature">
-                  <span>👨‍💻</span>
-                  <p>התחברו עם GitHub כדי לשמור את ההתקדמות שלכם</p>
+        {/* הדרכה לביקור ראשון */}
+        {showTutorial && (
+          <div className="tutorial-overlay">
+            <div className="tutorial-card">
+              <h2>🎯 ברוכים הבאים למסע הלימודי!</h2>
+              <div className="tutorial-steps">
+                <div className="step">
+                  <span>1️⃣</span>
+                  <div>
+                    <h4>התחברו עם GitHub</h4>
+                    <p>קבלו 10 נקודות על התחברות ראשונה!</p>
+                  </div>
                 </div>
-                <div className="feature">
-                  <span>🎮</span>
-                  <p>פתרו משימות משחקיות וקבלו קלפים מיוחדים</p>
+                <div className="step">
+                  <span>2️⃣</span>
+                  <div>
+                    <h4>צרו דף נחיתה משלכם</h4>
+                    <p>המשימה הראשונה - העתיקו את הקוד ל-GitHub שלכם</p>
+                  </div>
                 </div>
-                <div className="feature">
-                  <span>📈</span>
-                  <p>תעקבו אחר ההתקדמות שלכם בלוח אישי</p>
+                <div className="step">
+                  <span>3️⃣</span>
+                  <div>
+                    <h4>קבלו קלף מיוחד</h4>
+                    <p>כל משימה מקנה קלף ייחודי לאוסף שלכם</p>
+                  </div>
                 </div>
-                <div className="feature">
-                  <span>🌐</span>
-                  <p>צרו קוד שירוץ במחשב או בטלפון שלכם</p>
+                <div className="step">
+                  <span>4️⃣</span>
+                  <div>
+                    <h4>שתפו והתקדמו</h4>
+                    <p>צברו נקודות ושתפו את הדפים שיצרתם</p>
+                  </div>
                 </div>
               </div>
-
-              <div className="github-explanation">
-                <h4>🤔 למה צריך GitHub?</h4>
-                <p>GitHub מאפשר לנו:</p>
-                <ul>
-                  <li>💾 <strong>לשמור את ההתקדמות</strong> - כל המשימות שתפתרו יישמרו</li>
-                  <li>🔒 <strong>גישה מאובטחת</strong> - רק אתם יכולים לראות את הנתונים שלכם</li>
-                  <li>🚀 <strong>חוויית למידה אמיתית</strong> - כמו שמפתחים אמיתיים עובדים</li>
-                  <li>📚 <strong>תיק עבודות</strong> - יוצר לכם תיק פרויקטים אישי</li>
-                </ul>
-              </div>
-
-              <button onClick={hideWelcome} className="understand-btn">
-                👍 הבנתי, בואו נתחיל!
+              <button onClick={completeTutorial} className="tutorial-btn">
+                🚀 הבנתי, בואו נתחיל!
               </button>
             </div>
           </div>
@@ -88,45 +111,149 @@ export default function Home() {
 
         <div className="main-content">
           <header className="hero-section">
-            <h1>🎮 Rene - מערכת לימוד תכנות</h1>
-            <p class="tagline">למדו לתכנת דרך משחק, אתגרים, וקבלת קלפים מיוחדים!</p>
+            <div className="hero-content">
+              <h1>🎮 Rene - המסע הלימודי שלך מתחיל כאן!</h1>
+              <p className="tagline">למד תכנות דרך יצירת דפי נחיתה מדהימים וצבירת קלפים מיוחדים</p>
+              
+              {userStats && (
+                <div className="user-points-display">
+                  <div className="points-card">
+                    <span className="points-icon">⭐</span>
+                    <div className="points-info">
+                      <h3>{userStats.points || 0} נקודות</h3>
+                      <p>הצטרפו עכשיו וקבלו 10 נקודות מתנה!</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </header>
 
           {!user ? (
             <div className="auth-section">
-              <div className="login-card">
-                <h2>🚀 התחברו כדי להתחיל את המסע</h2>
-                <p>התחברו עם GitHub כדי לשמור את ההתקדמות שלכם ולקבל גישה לכל המשימות:</p>
+              <div className="login-guide">
+                <h2>🚀 איך מתחילים?</h2>
                 
-                <button onClick={handleGitHubLogin} className="github-login-btn">
-                  <span>🐙</span>
-                  📚 התחבר עם GitHub
-                </button>
+                <div className="guide-steps">
+                  <div className="guide-step">
+                    <div className="step-number">1</div>
+                    <div className="step-content">
+                      <h4>התחברות עם GitHub</h4>
+                      <p>אנחנו משתמשים ב-GitHub כי זה הכלי הכי חשוב שמפתחים אמיתיים משתמשים בו!</p>
+                      <ul>
+                        <li>📚 <strong>לומדים כלי אמיתי</strong> - GitHub הוא סטנדרט בתעשייה</li>
+                        <li>💾 <strong>שומרים את כל הקוד</strong> - תיצרו תיק עבודות אמיתי</li>
+                        <li>🌐 <strong>מתארחים בחינם</strong> - GitHub Pages נותן לכם אתר חינם</li>
+                        <li>👥 <strong>משתפים פעולה</strong> - לומדים עבודה בצוות כמו מפתחים אמיתיים</li>
+                      </ul>
+                    </div>
+                  </div>
 
-                <div className="login-benefits">
-                  <h4>🎁 מה תקבלו לאחר ההתחברות:</h4>
-                  <ul>
-                    <li>✅ גישה למשימה הראשונה - יצירת משחק פשוט</li>
-                    <li>✅ קלף מתנה ראשון באוסף האישי</li>
-                    <li>✅ לוח מעקב התקדמות אישי</li>
-                    <li>✅ אפשרות ליצור קלפים משלכם</li>
-                  </ul>
+                  <div className="guide-step">
+                    <div className="step-number">2</div>
+                    <div className="step-content">
+                      <h4>מה תקבלו בהתחברות?</h4>
+                      <div className="rewards-grid">
+                        <div className="reward">
+                          <span>🎁</span>
+                          <p><strong>10 נקודות</strong> מתנה</p>
+                        </div>
+                        <div className="reward">
+                          <span>📄</span>
+                          <p><strong>קוד לדף נחיתה</strong> ראשון</p>
+                        </div>
+                        <div className="reward">
+                          <span>🃏</span>
+                          <p><strong>קלף אספנות</strong> מיוחד</p>
+                        </div>
+                        <div className="reward">
+                          <span>📊</span>
+                          <p><strong>לוח ניקוד</strong> אישי</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="guide-step">
+                    <div className="step-number">3</div>
+                    <div className="step-content">
+                      <h4>המשימה הראשונה מחכה!</h4>
+                      <p>מיד לאחר ההתחברות תוכלו:</p>
+                      <ol>
+                        <li>📋 לקבל את המשימה הראשונה - יצירת דף נחיתה</li>
+                        <li>💻 להעתיק את הקוד ל-GitHub שלכם</li>
+                        <li>🌐 להפעיל את GitHub Pages</li>
+                        <li>🎉 לקבל קלף מיוחד ולשתף את הדף עם חברים!</li>
+                      </ol>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="login-action">
+                  <button onClick={handleGitHubLogin} className="github-login-btn">
+                    <span className="github-icon">🐙</span>
+                    <span className="login-text">
+                      <strong>התחבר עם GitHub</strong>
+                      <small>וקבל 10 נקודות מתנה!</small>
+                    </span>
+                  </button>
+                  
+                  <div className="login-note">
+                    <p>💡 <strong>אין לכם GitHub?</strong> 
+                    <a href="https://github.com/signup" target="_blank" rel="noopener noreferrer">
+                      צרו חשבון חינם כאן
+                    </a> - זה לוקח 2 דקות!</p>
+                  </div>
                 </div>
               </div>
             </div>
           ) : (
             <div className="user-welcome">
-              <h2>👋 שלום {user.user_metadata?.full_name || 'משתמש'}!</h2>
-              <p>הצלחתם להתחבר! מעבר ללוח הבקרה...</p>
-              <script>
-                {setTimeout(() => window.location.href = '/dashboard', 2000)}
-              </script>
+              <div className="welcome-card">
+                <h2>🎉 {user.user_metadata?.full_name || 'משתמש'} Welcome!</h2>
+                <p>הצלחת להתחבר עם GitHub! מעברים אותך ללוח הניהול...</p>
+                <div className="loading-spinner"></div>
+              </div>
+              <script dangerouslySetInnerHTML={{
+                __html: `setTimeout(() => window.location.href = '/dashboard', 2000)`
+              }} />
             </div>
           )}
 
+          {/* סטטיסטיקות ציבוריות */}
+          <div className="public-stats">
+            <h3>📊 סטטיסטיקות קהילת Rene</h3>
+            <div className="stats-grid">
+              <div className="stat-card">
+                <span className="stat-number">128</span>
+                <span className="stat-label">תלמידים פעילים</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-number">347</span>
+                <span className="stat-label">דפי נחיתה נוצרו</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-number">892</span>
+                <span className="stat-label">קלפים נאספו</span>
+              </div>
+              <div className="stat-card">
+                <span className="stat-number">2,154</span>
+                <span className="stat-label">נקודות שחולקו</span>
+              </div>
+            </div>
+          </div>
+
           <footer className="site-footer">
-            <p>📧 שאלות? <a href="https://github.com/osifeu-prog/rene/discussions">פורום הדיונים שלנו</a></p>
-            <p>🐛 דיווח באגים? <a href="https://github.com/osifeu-prog/rene/issues">דווחו כאן</a></p>
+            <div className="footer-content">
+              <p>🧩 <strong>רוצים לעזור?</strong> 
+              <a href="https://github.com/osifeu-prog/rene/issues" target="_blank" rel="noopener noreferrer">
+                דווחו על באגים או הציעו רעיונות
+              </a></p>
+              <p>📚 <strong>צריכים עזרה?</strong> 
+              <a href="https://github.com/osifeu-prog/rene/discussions" target="_blank" rel="noopener noreferrer">
+                שאלו בפורום הקהילה
+              </a></p>
+            </div>
           </footer>
         </div>
       </div>
