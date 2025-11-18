@@ -1,32 +1,26 @@
 import { useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { createUserProgress } from '../lib/database'
 
 export default function TaskCard({ task, isCompleted, onTaskComplete }) {
   const [submission, setSubmission] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
   const handleSubmit = async () => {
-    if (!submission.trim()) return
+    if (!submission.trim()) {
+      alert('❌ אנא הכנס פתרון לפני השליחה')
+      return
+    }
     
     setIsSubmitting(true)
     try {
-      const { data: { user } } = await supabase.auth.getUser()
-      
-      const { error } = await supabase
-        .from('user_progress')
-        .insert({
-          user_id: user.id,
-          task_id: task.id,
-          submission_text: submission,
-          completed: true
-        })
-
-      if (!error) {
-        onTaskComplete(task.id)
-        setSubmission('')
-      }
+      console.log(`📤 שולח פתרון למשימה: ${task.title}`)
+      await createUserProgress('demo-user', task.id, submission)
+      onTaskComplete(task.id, submission)
+      setSubmission('')
+      console.log('✅ הפתרון נשמר בהצלחה!')
     } catch (error) {
-      console.error('Error submitting task:', error)
+      console.error('❌ שגיאה בשליחת הפתרון:', error)
+      alert('❌ שגיאה בשמירת הפתרון')
     } finally {
       setIsSubmitting(false)
     }
@@ -36,6 +30,7 @@ export default function TaskCard({ task, isCompleted, onTaskComplete }) {
     <div className={`task-card ${isCompleted ? 'completed' : ''}`}>
       <div className="task-header">
         <h3>🎯 {task.title}</h3>
+        <span className="task-order">#{task.order_index}</span>
         {isCompleted && <span className="completed-badge">✅ הושלם!</span>}
       </div>
       
@@ -62,7 +57,7 @@ export default function TaskCard({ task, isCompleted, onTaskComplete }) {
             disabled={isSubmitting || !submission.trim()}
             className="submit-btn"
           >
-            {isSubmitting ? 'שולח...' : 'שלח פתרון 🚀'}
+            {isSubmitting ? '🔄 שולח...' : '🚀 שלח פתרון'}
           </button>
         </div>
       )}
