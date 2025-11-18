@@ -1,40 +1,219 @@
-/* הוסף את זה לקובץ ה-CSS הקיים */
-.loading small {
-  display: block;
-  margin-top: 1rem;
-  font-size: 0.8rem;
-  opacity: 0.7;
+/* הוסף לתחתית הקובץ הקיים */
+
+/* עיצוב חדש לדף הבית */
+.home-container {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
-.no-tasks {
-  text-align: center;
-  padding: 2rem;
+.welcome-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.welcome-card {
   background: white;
-  border-radius: 10px;
-  margin: 1rem 0;
+  padding: 2rem;
+  border-radius: 15px;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
-.no-tasks button {
-  margin-top: 1rem;
-  padding: 0.5rem 1rem;
+.features {
+  display: grid;
+  gap: 1rem;
+  margin: 1.5rem 0;
+}
+
+.feature {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.github-explanation {
+  background: #e7f3ff;
+  padding: 1.5rem;
+  border-radius: 10px;
+  margin: 1.5rem 0;
+}
+
+.github-explanation ul {
+  margin: 1rem 0;
+  padding-right: 1rem;
+}
+
+.github-explanation li {
+  margin-bottom: 0.5rem;
+}
+
+.understand-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.main-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  color: white;
+}
+
+.hero-section {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.hero-section h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+.tagline {
+  font-size: 1.5rem;
+  opacity: 0.9;
+}
+
+.auth-section {
+  display: flex;
+  justify-content: center;
+}
+
+.login-card {
+  background: white;
+  color: #333;
+  padding: 2rem;
+  border-radius: 15px;
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+}
+
+.github-login-btn {
+  background: #333;
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 1.5rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  width: 100%;
+}
+
+.login-benefits {
+  text-align: right;
+  margin-top: 1.5rem;
+}
+
+.login-benefits ul {
+  margin: 1rem 0;
+  padding-right: 1rem;
+}
+
+.site-footer {
+  text-align: center;
+  margin-top: 3rem;
+  padding-top: 2rem;
+  border-top: 1px solid rgba(255,255,255,0.3);
+}
+
+.site-footer a {
+  color: white;
+  text-decoration: underline;
+}
+
+/* עיצוב לוח בקרה */
+.dashboard-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.welcome-message {
+  background: white;
+  padding: 2rem;
+  border-radius: 15px;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.tasks-grid {
+  display: grid;
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.task-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.start-task-btn {
   background: #667eea;
   color: white;
   border: none;
-  border-radius: 5px;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
   cursor: pointer;
 }
 
-.task-order {
-  background: #667eea;
-  color: white;
-  padding: 0.2rem 0.5rem;
-  border-radius: 10px;
-  font-size: 0.8rem;
+.steps-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
 }
 
-.progress-message {
-  display: block;
-  margin-top: 0.5rem;
-  font-weight: bold;
-  color: #667eea;
+.step-card {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-size: 1.5rem;
 }
