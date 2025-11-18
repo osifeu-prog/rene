@@ -1,18 +1,28 @@
-/* הוסף לתחתית הקובץ הקיים */
-
-/* עיצוב חדש לדף הבית */
-.home-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.welcome-overlay {
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  min-height: 100vh;
+  direction: rtl;
+}
+
+/* עיצוב דף הבית */
+.home-container {
+  min-height: 100vh;
+}
+
+.tutorial-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -20,47 +30,29 @@
   padding: 20px;
 }
 
-.welcome-card {
+.tutorial-card {
   background: white;
   padding: 2rem;
   border-radius: 15px;
-  max-width: 600px;
-  max-height: 80vh;
-  overflow-y: auto;
+  max-width: 500px;
+  text-align: center;
 }
 
-.features {
-  display: grid;
-  gap: 1rem;
+.tutorial-steps {
   margin: 1.5rem 0;
 }
 
-.feature {
+.step {
   display: flex;
   align-items: center;
   gap: 1rem;
+  margin: 1rem 0;
   padding: 1rem;
   background: #f8f9fa;
-  border-radius: 8px;
-}
-
-.github-explanation {
-  background: #e7f3ff;
-  padding: 1.5rem;
   border-radius: 10px;
-  margin: 1.5rem 0;
 }
 
-.github-explanation ul {
-  margin: 1rem 0;
-  padding-right: 1rem;
-}
-
-.github-explanation li {
-  margin-bottom: 0.5rem;
-}
-
-.understand-btn {
+.tutorial-btn {
   background: #4CAF50;
   color: white;
   border: none;
@@ -105,7 +97,22 @@
   border-radius: 15px;
   max-width: 500px;
   width: 100%;
-  text-align: center;
+}
+
+.github-explanation {
+  background: #e7f3ff;
+  padding: 1rem;
+  border-radius: 10px;
+  margin: 1rem 0;
+}
+
+.github-explanation ul {
+  margin: 1rem 0;
+  padding-right: 1rem;
+}
+
+.github-explanation li {
+  margin-bottom: 0.5rem;
 }
 
 .github-login-btn {
@@ -116,22 +123,29 @@
   font-size: 1.2rem;
   border-radius: 8px;
   cursor: pointer;
-  margin: 1.5rem 0;
+  margin: 1rem 0;
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  width: 100%;
 }
 
 .login-benefits {
-  text-align: right;
   margin-top: 1.5rem;
 }
 
 .login-benefits ul {
   margin: 1rem 0;
   padding-right: 1rem;
+}
+
+.user-welcome {
+  text-align: center;
+  padding: 2rem;
+  background: white;
+  color: #333;
+  border-radius: 15px;
 }
 
 .site-footer {
@@ -146,7 +160,7 @@
   text-decoration: underline;
 }
 
-/* עיצוב לוח בקרה */
+/* עיצוב דשבורד */
 .dashboard-container {
   max-width: 1200px;
   margin: 0 auto;
@@ -162,52 +176,98 @@
   background: white;
   padding: 1.5rem;
   border-radius: 15px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
-.welcome-message {
-  background: white;
-  padding: 2rem;
-  border-radius: 15px;
+.logout-btn {
+  background: #ff4757;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.dashboard-nav {
+  display: flex;
+  gap: 1rem;
   margin-bottom: 2rem;
-  text-align: center;
+  background: white;
+  padding: 1rem;
+  border-radius: 10px;
 }
 
-.tasks-grid {
-  display: grid;
-  gap: 1.5rem;
-  margin: 1.5rem 0;
+.dashboard-nav button {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.dashboard-nav button.active {
+  background: #667eea;
+  color: white;
 }
 
 .task-card {
   background: white;
-  padding: 1.5rem;
-  border-radius: 10px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  padding: 2rem;
+  border-radius: 15px;
+  margin-bottom: 1.5rem;
+}
+
+.task-steps {
+  margin: 1.5rem 0;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 1rem 0;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 8px;
 }
 
 .start-task-btn {
   background: #667eea;
   color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
-  border-radius: 6px;
+  padding: 1rem 2rem;
+  border-radius: 8px;
   cursor: pointer;
+  font-size: 1.1rem;
 }
 
-.steps-grid {
+.no-cards {
+  text-align: center;
+  padding: 3rem;
+  background: white;
+  border-radius: 15px;
+}
+
+.stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-top: 1.5rem;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
 }
 
-.step-card {
+.stat-card {
   background: white;
   padding: 1.5rem;
   border-radius: 10px;
   text-align: center;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  display: block;
+}
+
+.stat-label {
+  color: #666;
 }
 
 .loading {
@@ -216,4 +276,19 @@
   align-items: center;
   height: 100vh;
   font-size: 1.5rem;
+  color: white;
+}
+
+@media (max-width: 768px) {
+  .hero-section h1 {
+    font-size: 2rem;
+  }
+  
+  .main-content {
+    padding: 1rem;
+  }
+  
+  .dashboard-container {
+    padding: 1rem;
+  }
 }
