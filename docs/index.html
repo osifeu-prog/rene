@@ -3,643 +3,131 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Rene - מערכת לימוד תכנות משחקית</title>
-  <meta name="description" content="Rene — פתיחת פרויקט ראשון בגיטהאב, XP, שיתופים אמיתיים, הזמנות לחברים, מדריך מלא ליצירת דף נחיתה אישי בעזרת AI, ואנימציות חלקות ונגישות." />
+  <title>רנה — מערכת לימוד תכנות משחקית</title>
+  <meta name="description" content="רנה — פתיחת פרויקט ראשון בגיטהאב, XP, שיתופים אמיתיים, מדריך מלא ליצירת דף נחיתה אישי בעזרת AI, ואנימציות חלקות ונגישות." />
   <style>
-    /* צבעים ונגישות */
-    :root{
-      --bg1:#0d1024; --bg2:#1a1642;
-      --text:#ffffff; --muted:#e6e6e6;
-      --accent:#ff4d8f; --accent2:#00ffe1; --accent3:#7cfb00;
-      --glass:rgba(255,255,255,0.10); --glass-strong:rgba(255,255,255,0.16);
-      --border:rgba(255,255,255,0.22);
-      --shadow:0 10px 24px rgba(0,0,0,0.35);
-      --radius:16px;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;padding:0}
-    body{
+    body {
       font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      color:var(--text);
-      background:
-        radial-gradient(1200px 600px at 20% 10%, #2b1b56 0%, var(--bg1) 40%),
-        linear-gradient(135deg, var(--bg1), var(--bg2));
-      min-height:100vh; overflow-x:hidden; perspective:1200px;
-      -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+      background: linear-gradient(135deg,#0d1024,#1a1642);
+      color:#fff;
+      margin:0; padding:0;
     }
-    a{color:#fff; text-decoration:underline}
+    h1,h2,h3,p,li,code { color:#fff }
     .container{max-width:1200px;margin:0 auto;padding:2rem}
-
-    /* רקע חלק ובעל ניגודיות טובה */
-    .bg{position:fixed;inset:0;z-index:-3;overflow:hidden}
-    canvas#particles{position:absolute;inset:0;opacity:0.22;will-change:transform}
-    .orb{
-      position:absolute;width:280px;height:280px;border-radius:50%;
-      background: radial-gradient(circle at 30% 30%, var(--accent2) 0%, #6a37ff 35%, transparent 70%);
-      filter: blur(32px); mix-blend-mode: screen; will-change:transform;
-      animation: orbMove 20s linear infinite;
-    }
-    .orb.orb2{background: radial-gradient(circle at 70% 30%, var(--accent) 0%, #ffb86b 40%, transparent 70%);animation-duration:26s}
-    @keyframes orbMove{
-      0%{transform: translate3d(8vw,10vh,0)}
-      50%{transform: translate3d(72vw,28vh,0)}
-      100%{transform: translate3d(8vw,10vh,0)}
-    }
-    .wave{
-      position:absolute;left:0;right:0;bottom:-8vh;height:36vh;
-      background:
-        radial-gradient(closest-side at 20% 50%, rgba(255,255,255,0.09), transparent 60%),
-        radial-gradient(closest-side at 80% 50%, rgba(255,255,255,0.09), transparent 60%);
-      filter: blur(16px); transform: translateZ(-200px); will-change:transform;
-      animation: waveFloat 14s ease-in-out infinite;
-    }
-    @keyframes waveFloat{0%,100%{transform: translateY(0) translateZ(-200px)}50%{transform: translateY(-10px) translateZ(-200px)}}
-
-    /* Hero נגיש, עם אנימציות יציבות */
-    .hero{
-      text-align:center; padding:5rem 1rem 2rem;
-    }
-    .title3d{
-      display:inline-block; font-size: clamp(2rem,5vw,4rem);
-      letter-spacing:.6px; background: linear-gradient(90deg,#fff,#e7fffb 30%,#ffe1ec 60%,#fff 90%);
-      -webkit-background-clip:text; background-clip:text; color:transparent;
-      text-shadow: 0 2px 0 rgba(0,0,0,0.3), 0 0 14px rgba(0,255,225,.35), 0 0 24px rgba(255,77,143,.30);
-    }
-    .hero p{max-width:900px;margin:1rem auto 2rem;font-size:1.15rem;color:var(--muted)}
-
-    /* אנימציות הופעה חלקות לכל בלוקים */
-    .appear{opacity:0; transform: translateY(14px); will-change:opacity,transform}
-    .appear.in{opacity:1; transform: translateY(0); transition: opacity .5s ease, transform .5s ease}
-
-    /* כפתורים (ניגודיות גבוהה) */
-    .btn{
-      display:inline-block; padding:.9rem 1.4rem; border-radius:999px;
-      background: linear-gradient(135deg, rgba(255,255,255,.14), rgba(255,255,255,.08));
-      border:1px solid var(--border); color:#fff; text-decoration:none;
-      margin:.4rem; position:relative; overflow:hidden; box-shadow: var(--shadow);
-      backdrop-filter: blur(10px); transition: transform .2s ease, box-shadow .2s, background .2s;
-      cursor:pointer;
-    }
-    .btn.primary{background: linear-gradient(135deg, var(--accent), #ff7bb0); box-shadow: 0 8px 24px rgba(255,77,143,.45)}
-    .btn.success{background: linear-gradient(135deg, var(--accent3), #a9ff58); color:#102b00; font-weight:700}
-    .btn:hover{transform: translate3d(0,-3px,0)}
-    .btn:active{transform: translate3d(0,0,0)}
-    .btn::after{
-      content:""; position:absolute; width:10px; height:10px; border-radius:50%; background:rgba(255,255,255,.7);
-      transform: translate3d(var(--rx,0), var(--ry,0), 0) scale(0); opacity:0; pointer-events:none;
-      transition: transform .6s ease, opacity .9s ease;
-    }
-    .btn.rippling::after{ transform: translate3d(var(--rx,0), var(--ry,0), 0) scale(22); opacity:.22 }
-
-    /* פיצ'רים */
-    .features{ display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:1.2rem; margin:1rem 0 2rem }
-    .card{
-      background: var(--glass); border:1px solid rgba(255,255,255,.18);
-      border-radius:var(--radius); padding:1.3rem; backdrop-filter: blur(12px);
-      transition: transform .2s ease, box-shadow .2s; box-shadow: 0 8px 28px rgba(0,0,0,.25); color:#fff;
-    }
-    .card:hover{ transform: translateY(-4px); box-shadow: 0 16px 36px rgba(0,0,0,.35) }
-    .card h3{ margin:0 0 .6rem; font-size:1.25rem; color:#fff }
-    .card p{ color:#eaeaea }
-
-    /* משימה ראשונה */
-    .task{
-      margin:2rem 0; padding:1.5rem; border-radius:var(--radius);
-      background: var(--glass-strong); border:1px solid rgba(255,255,255,.18); box-shadow: var(--shadow); color:#fff
-    }
-    .task h2{ margin:0 0 .6rem }
-    .task p{ color:#eaeaea }
-    .task ol{ margin:.6rem 0 0; padding-inline-start:1.2rem }
-    .task li{ margin:.45rem 0 }
-    .task ul{ margin:.3rem 0 .6rem; padding-inline-start:1.2rem }
-    .task code{ background: rgba(0,0,0,.35); padding:.2rem .4rem; border-radius:8px; border:1px solid rgba(255,255,255,.15); display:inline-block; direction:ltr; color:#fff }
-
-    /* מדריך AI */
-    .guide{
-      margin:1.5rem 0; padding:1.5rem; border-radius:var(--radius);
-      background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); box-shadow: var(--shadow); color:#fff
-    }
-    .guide h2{ margin:0 0 .6rem }
-    .guide p{ color:#eaeaea }
-    .prompt{
-      background: rgba(0,0,0,.35); border:1px solid rgba(255,255,255,.15); border-radius:12px; padding:.8rem; margin:.6rem 0; color:#fff
-    }
-    .prompt code{ display:block; white-space:pre-wrap; line-height:1.5; color:#fff }
-
-    /* משחק קלפים */
-    .game{ margin:1.5rem 0; text-align:center; color:#fff }
-    .deck{ display:flex; flex-wrap:wrap; gap:.8rem; justify-content:center; margin-top:1rem }
-    .game-card{
-      min-width:220px; max-width:280px; flex:1 1 240px;
-      background: var(--glass-strong); border:1px solid rgba(255,255,255,.22);
-      border-radius:14px; padding:1rem; text-align:right; box-shadow: 0 10px 28px rgba(0,0,0,.28);
-      transition: transform .2s ease, opacity .2s ease; color:#fff;
-    }
-    .game-card.show{ transform: translateY(0); opacity:1 }
-    .game-card.hide{ transform: translateY(8px); opacity:.0 }
-
-    .xp{
-      display:inline-flex; align-items:center; gap:.4rem;
-      background: rgba(0,255,225,.18); border:1px solid rgba(0,255,225,.35);
-      color:#eafffb; border-radius:999px; padding:.2rem .6rem; font-weight:600; font-size:.95rem
-    }
-
-    /* שיתוף + Leaderboard */
-    .share{ margin:1.5rem 0; text-align:center; color:#fff }
-    .share input{
-      min-width:280px; max-width:520px; width:60%; padding:.6rem; border-radius:12px;
-      border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.1); color:#fff; outline:none;
-      transition: box-shadow .2s ease;
-    }
-    .share input::placeholder{ color:#ddd }
-    .share input:focus{ box-shadow: 0 0 0 3px rgba(0,255,225,.22) }
-
-    .leaderboard{
-      margin:1.5rem 0; padding:1.4rem; border-radius:16px;
-      background: var(--glass); border:1px solid rgba(255,255,255,.18); color:#fff
-    }
-    .leaderboard h2{ text-align:center; margin:.2rem 0 1rem }
-    .leaderboard ul{ list-style:none; margin:0; padding:0; display:grid; gap:.4rem }
-    .leaderboard li{ background: rgba(255,255,255,.10); padding:.6rem .8rem; border-radius:12px; color:#fff }
-
-    /* פוסט-חיבור: יוצג רק אחרי שהילד הזין את הלינק שלו */
-    .post-connect{
-      margin:1.5rem 0; padding:1.2rem; border-radius:16px;
-      background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18);
-      display:none; color:#fff;
-    }
-
-    /* אדמין */
-    .admin{ margin:2rem 0; padding:1rem; border-radius:14px; background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); color:#fff }
-    .admin-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:.8rem }
-    .admin-card{ background: rgba(255,255,255,.10); padding:.8rem; border-radius:10px; color:#fff }
-
-    footer{ text-align:center;margin:2rem 0 1rem;opacity:.9; color:#fff }
-
-    @media (max-width:768px){ .container{padding:1rem} }
-    @media (prefers-reduced-motion: reduce){
-      *{ animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important }
-    }
+    .btn{display:inline-block;padding:.8rem 1.2rem;margin:.3rem;border-radius:999px;background:#ff4d8f;color:#fff;text-decoration:none;cursor:pointer}
+    .btn.success{background:#7cfb00;color:#102b00;font-weight:700}
+    .xp{background:rgba(0,255,225,.18);border:1px solid rgba(0,255,225,.35);border-radius:999px;padding:.2rem .6rem;font-weight:600}
+    textarea{width:100%;padding:.6rem;border-radius:8px;border:1px solid #ccc;margin-top:.5rem}
+    .leaderboard ul{list-style:none;padding:0}
+    .leaderboard li{background:rgba(255,255,255,.1);padding:.6rem;border-radius:12px;margin:.3rem 0}
   </style>
 </head>
 <body>
-  <!-- רקע חלק -->
-  <div class="bg" aria-hidden="true">
-    <canvas id="particles"></canvas>
-    <div class="wave"></div>
-    <div class="orb"></div>
-    <div class="orb orb2"></div>
-  </div>
-
   <div class="container">
-    <section class="hero appear">
-      <h1 class="title3d">🎮 Rene — מערכת לימוד תכנות משחקית</h1>
+    <section class="hero">
+      <h1>🎮 רנה — מערכת לימוד תכנות משחקית</h1>
       <p>פותחים פרויקט ראשון בגיטהאב, צוברים XP, מזמינים חברים עם לינק אישי ומחברים את דף הנחיתה שלכם — הכל נגיש, צבעוני וחלק.</p>
-
-      <!-- כפתורי פעולה עיקריים -->
-      <div role="group" aria-label="פעולות ראשוניות">
-        <a class="btn primary" href="https://github.com/signup" target="_blank" rel="noopener" data-track="signup" aria-label="הרשמה לגיטהאב">🧑‍🚀 הירשם לגיטהאב</a>
-        <a class="btn" href="https://github.com/new" target="_blank" rel="noopener" data-track="newrepo" aria-label="פתיחת פרויקט חדש בגיטהאב">📦 פתח את הפרויקט הראשון שלך</a>
-        <button class="btn" id="connectRepoBtn" title="חיבור דף הנחיתה לפרויקט שלך" aria-label="חיבור דף הנחיתה">🔗 חבר את הדף לפרויקט שלך</button>
+      <div>
+        <a class="btn" href="https://github.com/signup" target="_blank">🧑‍🚀 הירשם לגיטהאב</a>
+        <a class="btn" href="https://github.com/new" target="_blank">📦 פתח את הפרויקט הראשון שלך</a>
+        <button class="btn" id="connectRepoBtn">🔗 חבר את הדף לפרויקט שלך</button>
       </div>
     </section>
 
-    <!-- פיצ'רים -->
-    <section class="features appear" aria-label="מאפייני המערכת">
-      <div class="card"><h3>👨‍💻 למידה חווייתית</h3><p>משחקיות, אתגרים ונקודות — בלי שיעורים משעממים.</p></div>
-      <div class="card"><h3>🎯 משימות מעשיות</h3><p>כל צעד = קוד אמיתי שרץ בדפדפן ובמחשב.</p></div>
-      <div class="card"><h3>🃏 אוסף קלפים</h3><p>הגרילו קלפי אתגר/טיפים והרוויחו XP לכל משימה.</p></div>
-      <div class="card"><h3>📈 מעקב ושיתופים</h3><p>מתעדכן בזמן אמת: משימות, XP ושיתופים.</p></div>
-    </section>
-
-    <!-- משימה ראשונה (נוסח מתוקן ומלא) -->
-    <section class="task appear" id="firstTask">
+    <section class="task">
       <h2>🚀 משימה #1 — הפרויקט הראשון שלך בגיטהאב</h2>
-      <p>העמוד הזה יהיה דף הנחיתה הראשון שלך! תוך כמה דקות יהיה לך פרויקט בגיטהאב עם דף שכולם יכולים לראות.</p>
       <ol>
-        <li><strong>פתח משתמש:</strong> לחץ על <a href="https://github.com/signup" target="_blank" rel="noopener">הרשמה לגיטהאב</a> וסיים את ההרשמה.</li>
-        <li><strong>צור ריפו חדש:</strong> לחץ על <a href="https://github.com/new" target="_blank" rel="noopener">פתיחת פרויקט חדש</a>.</li>
-        <li><strong>שם הריפו:</strong> בחר שם קליט, למשל <code>rene-first-project</code>.</li>
-        <li><strong>העלה את הקובץ הזה:</strong> פתח את הריפו ולחץ על <em>Add file → Create new file</em> או <em>Upload files</em>, והדבק/העלה את הקובץ הזה בשם <code>index.html</code>.</li>
-        <li><strong>הפעל GitHub Pages:</strong> Settings → Pages → Source: Deploy from a branch, Branch: main, Folder: root. שמור — תקבל כתובת URL של הדף שלך.</li>
-        <li><strong>חבר את הדף כאן:</strong> לחץ על "<em>חבר את הדף לפרויקט שלך</em>" והדבק את ה־URL שקיבלת. זה יעניק לך XP ויאפשר שיתוף מהיר.</li>
+        <li>פתח משתמש חדש בגיטהאב.</li>
+        <li>צור ריפו חדש בשם <code>rene-first-project</code>.</li>
+        <li>העלה את הקובץ <code>index.html</code> עם הקוד הזה.</li>
+        <li>הפעל GitHub Pages כדי לקבל לינק אישי.</li>
+        <li>חבר את הלינק כאן כדי לקבל XP ולשתף חברים.</li>
       </ol>
       <p class="xp">+50 XP על פתיחת הפרויקט הראשון</p>
     </section>
 
-    <!-- מדריך AI -->
-    <section class="guide appear" id="aiGuide">
+    <section class="guide">
       <h2>📚 מדריך מלא — יצירת דף נחיתה אישי בעזרת AI</h2>
-      <p>המטרה: לכל תלמיד יהיה דף נחיתה אישי משלו, כחלק מהפרויקט הראשון. כך עושים זאת, צעד־אחר־צעד:</p>
-      <ol>
-        <li><strong>הבנת הקבצים:</strong>
-          <ul>
-            <li><strong>index.html</strong> — מבנה הדף (כותרות, טקסט, תמונות, כפתורים).</li>
-            <li><strong>CSS</strong> — עיצוב: צבעים, פריסה, אנימציות.</li>
-            <li><strong>JavaScript</strong> — אינטראקטיביות: משחק קלפים, XP, שיתוף, חיבור קישורים.</li>
-          </ul>
-        </li>
-        <li><strong>עבודה עם AI (מומלץ):</strong> אפשר להשתמש ב־Copilot או ChatGPT כדי לייצר דף נחיתה אישי מהר. בחרו AI שנוח לכם.</li>
-        <li><strong>פרומפט לדוגמה:</strong>
-          <div class="prompt" aria-label="פרומפט לדוגמה">
-            <code>
-אני תלמיד ב-Rene. בבקשה צור לי דף נחיתה אישי בעברית, כיפי ונגיש, עם:
-- כותרת גדולה עם שמי (לדוגמה: יעל כהן)
+      <p>אפשר להשתמש ב־Copilot או ChatGPT כדי ליצור דף נחיתה אישי. פרומפט לדוגמה:</p>
+      <code>
+צור לי דף נחיתה אישי בעברית עם:
+- כותרת גדולה עם שמי
 - תיאור קצר למה אני אוהב לתכנת
 - תמונה או רקע צבעוני
 - כפתור "צור קשר" וכפתור "צפה בפרויקט שלי"
-- סקשן "הפרויקטים שלי" עם 3 קלפים
 - טקסט לבן וניגודיות טובה
-- אנימציות חלקות (transform/opacity בלבד)
-- הוסף הערות בקוד שמסבירות כל רכיב
-            </code>
-          </div>
-        </li>
-        <li><strong>איך להעתיק ולהדביק לריפו שלכם:</strong>
-          <ul>
-            <li>ב־GitHub: ריפו → Add file → Create new file → <code>index.html</code>.</li>
-            <li>מדביקים את הקוד שקיבלתם מה־AI → Commit changes.</li>
-            <li>מפעילים GitHub Pages כדי לקבל לינק אישי.</li>
-          </ul>
-        </li>
-        <li><strong>חיבור כאן:</strong> לחצו "חבר את הדף לפרויקט שלך", הדביקו את כתובת GitHub Pages וקבלו XP.</li>
-        <li><strong>שיתוף לחברים:</strong> אחרי החיבור—יופיע החלק "פוסט-חיבור" עם לינק הזמנה אישי לכל חבר חדש שיקבל את העמוד הזה ויפתח פרויקט משלו.</li>
-      </ol>
-      <p class="xp">+100 XP על יצירת דף נחיתה אישי ושיתוף ראשון</p>
+- אנימציות חלקות
+      </code>
+      <p>העתיקו את הקוד שהתקבל והדביקו אותו בריפו שלכם.</p>
     </section>
 
-    <!-- מיני-משחק קלפים (נוסח מתוקן) -->
-    <section class="game appear" aria-label="מיני-משחק קלפים">
+    <section class="game">
       <h2>🎲 להגרלת קלף תכנות</h2>
-      <div>
-        <button class="btn primary" id="drawCardBtn" aria-label="הגרל קלף תכנות">הגרל קלף!</button>
-      </div>
+      <button class="btn" id="drawCardBtn">הגרל קלף!</button>
       <div class="deck" id="deck"></div>
+      <div id="answerArea" style="display:none;">
+        <h3>✍️ כתבו כאן את הפתרון שלכם:</h3>
+        <textarea id="studentAnswer" rows="4"></textarea>
+        <button class="btn success" id="submitAnswerBtn">שלח תשובה</button>
+        <p class="xp" id="answerXP" style="display:none;">+10 XP על כתיבת תשובה</p>
+      </div>
     </section>
 
-    <!-- שיתוף (לפני חיבור) -->
-    <section class="share appear" aria-label="שיתוף הדף האישי">
+    <section class="share">
       <h2>🔗 שתפו את העמוד שלכם</h2>
-      <p>אחרי שחיברתם את דף הנחיתה, שתפו אותו עם חברים וקבלו עוד XP על כל הצטרפות!</p>
-      <div>
-        <input id="shareUrl" type="text" placeholder="הדביקו כאן את כתובת הדף שלכם (GitHub Pages)" aria-label="כתובת הדף שלכם"/>
-        <button class="btn" id="saveShareUrl" aria-label="שמור כתובת">💾 שמור כתובת</button>
-        <button class="btn" id="copyShareUrl" aria-label="העתק קישור לשיתוף">📣 העתק קישור לשיתוף</button>
-      </div>
-      <p class="xp" style="margin-top:.8rem">+10 XP על שיתוף ראשון</p>
+      <input id="shareUrl" type="text" placeholder="הדביקו כאן את כתובת הדף שלכם (GitHub Pages)"/>
+      <button class="btn" id="saveShareUrl">💾 שמור כתובת</button>
+      <button class="btn" id="copyShareUrl">📣 העתק קישור לשיתוף</button>
     </section>
 
-    <!-- פוסט-חיבור: יוצג רק לאחר שהילד הזין את הלינק שלו -->
-    <section class="post-connect appear" id="postConnect" aria-label="לאחר חיבור הדף">
-      <h2>🎉 מעולה! הדף שלך מחובר</h2>
-      <p>מכאן אפשר להזמין חברים. כל חבר חדש שיצטרף יקבל את העמוד הזה ויכול לפתוח פרויקט אישי משלו.</p>
-      <div style="margin:.6rem 0">
-        <button class="btn success" id="inviteBtn" title="לינק הזמנה אישי לחבר" aria-label="צור לינק הזמנה אישי">🎟️ צור לינק הזמנה אישי</button>
-        <span class="xp" id="xpBadge" aria-live="polite">XP: 0</span>
-      </div>
+    <section class="post-connect" id="postConnect" style="display:none;">
+      <h2>🎉 הדף שלך מחובר</h2>
+      <p>עכשיו אפשר להזמין חברים. כל חבר חדש שיצטרף יקבל את העמוד הזה ויפתח פרויקט אישי משלו. לאחר 24 שיתופים תוכלו להצביע ולבחור שם לרשת.</p>
+      <button class="btn success" id="inviteBtn">🎟️ צור לינק הזמנה אישי</button>
+      <span class="xp" id="xpBadge">XP: 0</span>
     </section>
 
-    <!-- Leaderboard -->
-    <section class="leaderboard appear" aria-label="לוח מובילים">
+    <section class="leaderboard">
       <h2>🏆 לוח מובילים</h2>
-      <ul id="leaderList">
-        <li>🥇 נועה — 120 XP</li>
-        <li>🥈 יואב — 95 XP</li>
-        <li>🥉 דנה — 80 XP</li>
-      </ul>
-      <small style="opacity:.9;color:#eaeaea">אם הגדרת מסלולי API בשרת, הנתונים כאן יתעדכנו אוטומטית.</small>
-    </section>
-
-    <!-- אדמין -->
-    <section class="admin appear" id="adminPanel" style="display:none" aria-label="לוח אדמין">
-      <h2>🛠️ אדמין — מעקב הפצה והתקדמות</h2>
-      <div class="admin-grid">
-        <div class="admin-card"><strong>תלמידים</strong><div id="adminStudentsCount">0</div><small>נרשמו והזינו URL</small></div>
-        <div class="admin-card"><strong>שיתופים</strong><div id="adminShares">0</div><small>העתקות קישור ושיתופים רשומים</small></div>
-        <div class="admin-card"><strong>XP מצטבר</strong><div id="adminTotalXP">0</div><small>סכום לפי שרת</small></div>
-        <div class="admin-card"><strong>משימות הושלמו</strong><div id="adminTasks">0</div><small>פתיחת ריפו + חיבור דף</small></div>
-      </div>
-      <div style="margin-top:.8rem">
-        <button class="btn" id="exportData">⬇️ ייצא נתונים (JSON)</button>
-      </div>
-      <small style="display:block;margin-top:.6rem;opacity:.9;color:#eaeaea">כדי לפתוח את פאנל האדמין: הוסיפו ?admin=1 ל־URL של העמוד.</small>
+      <ul id="leaderList"></ul>
     </section>
 
     <footer>
-      <p>© 2025 Rene — מערכת לימוד תכנות משחקית</p>
+      <p>© 2025 רנה — מערכת לימוד תכנות משחקית</p>
     </footer>
   </div>
 
-  <audio id="popSound" src="https://www.soundjay.com/buttons/sounds/button-16.mp3" preload="auto"></audio>
-
   <script>
-    /* הגדרות API — כוון לשרת שלך אם זמין */
-    const API_BASE = (typeof window !== 'undefined' && window.location && window.location.origin) || 'https://rene-production.up.railway.app';
     const ENDPOINTS = {
-      signup: API_BASE + '/api/signup',                    // POST {userId, referrerId?}
-      newRepo: API_BASE + '/api/tasks/first-repo',         // POST {userId}
-      connectLanding: API_BASE + '/api/tasks/connect-landing', // POST {userId, url}
-      shareCopy: API_BASE + '/api/share/copy',             // POST {userId}
-      inviteLink: API_BASE + '/api/invite',                // POST {userId} -> {inviteUrl}
-      progress: API_BASE + '/api/progress',                // GET -> {xp, tasksCompleted, shares, students, totalXP}
-      leaderboard: API_BASE + '/api/leaderboard',          // GET -> [{name,xp,rankIcon?}]
-      referral: API_BASE + '/api/referral'                 // POST {referrerId, newUserFingerprint}
+      leaderboard: '/api/leaderboard'
     };
 
-    /* זיהוי משתמש מקומי */
-    const STORE_KEY = 'rene_app';
-    const DEFAULT_DATA = { userId:null, xp:0, tasks:{firstRepo:false,connectedLanding:false,firstShare:false}, shareUrl:'', inviteUrl:'', history:[] };
-    const SFX = document.getElementById('popSound');
-
-    function guid(){ return 'u_' + Math.random().toString(36).slice(2) + Date.now().toString(36); }
-    function load(){ try{ const raw = localStorage.getItem(STORE_KEY); return raw ? JSON.parse(raw) : {...DEFAULT_DATA}; }catch(e){ return {...DEFAULT_DATA}; } }
-    function save(d){ localStorage.setItem(STORE_KEY, JSON.stringify(d)); }
-
-    async function ensureUser(){
-      const d = load();
-      if(!d.userId){
-        d.userId = guid();
-        save(d);
-        try{
-          const referrerId = new URLSearchParams(location.search).get('ref');
-          await fetch(ENDPOINTS.signup, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, referrerId }) });
-        }catch(err){}
-      }
-      return d.userId;
-    }
-
-    function setXP(xp){
-      const badge = document.getElementById('xpBadge');
-      if(badge){ badge.textContent = 'XP: ' + xp; badge.style.transform = 'scale(1.06)'; setTimeout(()=> badge.style.transform='scale(1)', 200); }
-    }
-
-    /* הופעת בלוקים חלקה עם IntersectionObserver */
-    function appearOnScroll(){
-      const els = document.querySelectorAll('.appear');
-      const io = new IntersectionObserver((entries)=>{
-        entries.forEach(e=>{
-          if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); }
-        });
-      }, {rootMargin:'-10% 0px -10% 0px', threshold:0.05});
-      els.forEach(el=> io.observe(el));
-    }
-
-    /* חלקיקים — rAF, מעט נקודות */
-    function particles(){
-      const canvas = document.getElementById('particles');
-      const ctx = canvas.getContext('2d');
-      function resize(){
-        const dpr = window.devicePixelRatio || 1;
-        canvas.width = window.innerWidth * dpr;
-        canvas.height = window.innerHeight * dpr;
-        ctx.setTransform(1,0,0,1,0,0);
-        ctx.scale(dpr,dpr);
-      }
-      resize();
-      window.addEventListener('resize', resize);
-
-      const PCOUNT = 60;
-      const ps = new Array(PCOUNT).fill(0).map(()=>({
-        x: Math.random()*window.innerWidth,
-        y: Math.random()*window.innerHeight,
-        r: Math.random()*1.8 + 0.7,
-        vx: (Math.random()-0.5)*0.28,
-        vy: (Math.random()-0.5)*0.28,
-        c: Math.random()<.5 ? 'rgba(0,255,225,.7)' : 'rgba(255,77,143,.7)'
-      }));
-      function step(){
-        ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-        for(const p of ps){
-          p.x += p.vx; p.y += p.vy;
-          if(p.x<0||p.x>window.innerWidth) p.vx*=-1;
-          if(p.y<0||p.y>window.innerHeight) p.vy*=-1;
-          ctx.beginPath(); ctx.arc(p.x, p.y, p.r, 0, Math.PI*2); ctx.fillStyle = p.c; ctx.fill();
-        }
-        requestAnimationFrame(step);
-      }
-      step();
-    }
-
-    /* Ripple נגיש ועדין */
-    document.addEventListener('click', (e)=>{
-      const btn = e.target.closest('.btn');
-      if(!btn) return;
-      const rect = btn.getBoundingClientRect();
-      const x = e.clientX - rect.left;
-      const y = e.clientY - rect.top;
-      btn.style.setProperty('--rx', x+'px');
-      btn.style.setProperty('--ry', y+'px');
-      btn.classList.add('rippling');
-      setTimeout(()=> btn.classList.remove('rippling'), 320);
-    }, {passive:true});
-
-    /* קלפים ואתגרים */
     const cards = [
       { title:"💡 פונקציה כפול 2", text:"כתבו פונקציה שמחזירה מספר כפול 2.", xp:5 },
-      { title:"🔥 ניחוש מספרים", text:"צרו משחק שמגריל מספר 1–50 ואתם מנחשים.", xp:10 },
-      { title:"🧩 תנאים עם if", text:"הוסיפו בדיקות לוגיות לקלט המשתמש.", xp:5 },
-      { title:"🚀 לולאה 1→10", text:"צרו לולאה שמדפיסה את המספרים 1 עד 10.", xp:5 },
-      { title:"🎨 צבע רקע דינמי", text:"דף שמשנה רקע כל 2 שניות עם JS.", xp:10 }
+      { title:"🔥 ניחוש מספרים", text:"צרו משחק שמגריל מספר 1–50 ואתם מנחשים.", xp:10 }
     ];
-    function showCard(card){
-      const deck = document.getElementById('deck');
-      const el = document.createElement('div');
-      el.className = 'game-card hide';
-      el.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.4rem">
-          <strong>${card.title}</strong>
-          <span class="xp">+${card.xp} XP</span>
-        </div>
-        <div>${card.text}</div>
-      `;
-      deck.prepend(el);
-      requestAnimationFrame(()=>{ el.classList.remove('hide'); el.classList.add('show'); });
-    }
-    async function drawCard(){
-      const d = load();
-      const i = Math.floor(Math.random() * cards.length);
+
+    document.getElementById('drawCardBtn').addEventListener('click', ()=>{
+      const i = Math.floor(Math.random()*cards.length);
       const c = cards[i];
-      SFX.currentTime = 0; SFX.play();
-      showCard(c);
-      try{
-        await fetch(ENDPOINTS.progress, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, xp:c.xp, event:'draw_card', title:c.title }) });
-        await refreshProgress();
-      }catch(err){}
-    }
-
-    /* משימה ראשונה: סימון פתיחת ריפו */
-    document.querySelectorAll('[data-track]').forEach(el=>{
-      el.addEventListener('click', async ()=>{
-        const d = load();
-        const action = el.getAttribute('data-track');
-        await ensureUser();
-        if(action === 'signup'){
-          try{ await fetch(ENDPOINTS.signup, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId }) }); }catch(err){}
-        }
-        if(action === 'newrepo' && !d.tasks.firstRepo){
-          d.tasks.firstRepo = true; save(d);
-          try{
-            await fetch(ENDPOINTS.newRepo, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId }) });
-            await refreshProgress();
-          }catch(err){}
-          setTimeout(()=> alert('כל הכבוד! +50 XP על פתיחת הפרויקט הראשון 🎉'), 30);
-        }
-      }, {passive:true});
+      const deck = document.getElementById('deck');
+      deck.innerHTML = `<div><strong>${c.title}</strong><span class="xp">+${c.xp} XP</span><p>${c.text}</p></div>`;
+      document.getElementById('answerArea').style.display='block';
     });
 
-    /* חיבור דף נחיתה */
-    const connectBtn = document.getElementById('connectRepoBtn');
-    connectBtn.addEventListener('click', async ()=>{
-      const url = prompt('הדביקו כאן את כתובת GitHub Pages של הפרויקט שלכם:');
-      if(!url) return;
-      await ensureUser();
-      const d = load();
-      d.shareUrl = url.trim(); d.tasks.connectedLanding = true; save(d);
-      document.getElementById('shareUrl').value = d.shareUrl;
-      try{
-        await fetch(ENDPOINTS.connectLanding, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, url:d.shareUrl }) });
-        await refreshProgress();
-      }catch(err){}
-      revealPostConnect();
-      alert('הדף חובר בהצלחה! תוכלו לשתף אותו ולצבור XP.');
+    document.getElementById('submitAnswerBtn').addEventListener('click', ()=>{
+      const answer = document.getElementById('studentAnswer').value.trim();
+      if(answer){
+        document.getElementById('answerXP').style.display='block';
+        alert("תשובתך נשמרה! קיבלת +10 XP 🎉");
+      } else {
+        alert("נא לכתוב תשובה לפני השליחה.");
+      }
     });
 
-    /* שמירת/העתקת כתובת שיתוף */
-    const saveShareBtn = document.getElementById('saveShareUrl');
-    const copyShareBtn = document.getElementById('copyShareUrl');
-    const shareInput = document.getElementById('shareUrl');
-
-    saveShareBtn.addEventListener('click', async ()=>{
-      const val = (shareInput.value || '').trim();
-      if(!val){ alert('נא להזין כתובת תקינה של GitHub Pages.'); return; }
-      await ensureUser();
-      const d = load();
-      d.shareUrl = val; d.tasks.connectedLanding = true; save(d);
-      try{
-        await fetch(ENDPOINTS.connectLanding, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, url:d.shareUrl }) });
-        await refreshProgress();
-      }catch(err){}
-      revealPostConnect();
-      alert('נשמר! עכשיו אפשר לשתף בקליק.');
-    });
-
-    copyShareBtn.addEventListener('click', async ()=>{
-      const d = load();
-      if(!d.shareUrl){ alert('אין כתובת שמורה. הזינו את כתובת ה־GitHub Pages שלכם.'); return; }
-      try{
-        await navigator.clipboard.writeText(d.shareUrl);
-        await ensureUser();
-        await fetch(ENDPOINTS.shareCopy, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId }) });
-        await refreshProgress();
-        alert('הקישור הועתק! שתפו אותו בווטסאפ/קבוצות 😉');
-      }catch(err){ alert('לא הצלחתי להעתיק. נסו ידנית.'); }
-    });
-
-    /* פוסט-חיבור: הצגה רק לאחר חיבור URL */
-    function revealPostConnect(){
-      const post = document.getElementById('postConnect');
-      post.style.display = 'block';
-      post.classList.add('in');
-    }
-
-    /* לינק הזמנה אישי — יוצג רק אחרי חיבור */
-    const inviteBtn = document.getElementById('inviteBtn');
-    if(inviteBtn){
-      inviteBtn.addEventListener('click', async ()=>{
-        await ensureUser();
-        const d = load();
-        try{
-          const res = await fetch(ENDPOINTS.inviteLink, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId }) });
-          const j = await res.json();
-          const url = j.inviteUrl || (location.origin + location.pathname + '?ref=' + d.userId);
-          d.inviteUrl = url; save(d);
-          await navigator.clipboard.writeText(url);
-          alert('לינק ההזמנה הועתק! שלחו לחברים: ' + url);
-        }catch(err){
-          const url = location.origin + location.pathname + '?ref=' + d.userId;
-          d.inviteUrl = url; save(d);
-          await navigator.clipboard.writeText(url);
-          alert('לינק ההזמנה הועתק! שלחו לחברים: ' + url);
-        }
-      });
-    }
-
-    /* רישום הצטרפות חבר חדש (referral) */
-    async function captureReferral(){
-      const params = new URLSearchParams(location.search);
-      const ref = params.get('ref');
-      if(!ref) return;
-      const myFingerprint = guid();
-      try{
-        await fetch(ENDPOINTS.referral, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ referrerId:ref, newUserFingerprint:myFingerprint }) });
-      }catch(err){}
-    }
-
-    /* Leaderboard מהשרת (אם קיים) */
-    async function renderLeaderboardServer(){
+    async function renderLeaderboard(){
       try{
         const res = await fetch(ENDPOINTS.leaderboard);
-        if(!res.ok) throw new Error('leaderboard not ok');
         const arr = await res.json();
         const list = document.getElementById('leaderList');
-        list.innerHTML = arr.map(x=> `<li>${x.rankIcon || '🔹'} ${x.name} — ${x.xp} XP</li>`).join('');
-      }catch(err){
-        // דמה
-      }
-    }
-
-    /* אדמין מהשרת (אם קיים) */
-    function isAdmin(){ return new URLSearchParams(location.search).get('admin') === '1'; }
-    async function renderAdmin(){
-      const panel = document.getElementById('adminPanel');
-      if(!isAdmin()){ panel.style.display='none'; return; }
-      panel.style.display='block';
-      try{
-        const res = await fetch(ENDPOINTS.progress);
-        const data = await res.json();
-        document.getElementById('adminStudentsCount').textContent = data.students || 0;
-        document.getElementById('adminShares').textContent = data.shares || 0;
-        document.getElementById('adminTotalXP').textContent = data.totalXP || 0;
-        document.getElementById('adminTasks').textContent = data.tasksCompleted || 0;
-        document.getElementById('exportData').onclick = async ()=>{
-          const res2 = await fetch(ENDPOINTS.progress + '?export=1');
-          const blob = await res2.blob();
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url; a.download = 'rene_server_data.json'; a.click();
-          URL.revokeObjectURL(url);
-        };
-      }catch(err){}
-    }
-
-    /* רענון XP */
-    async function refreshProgress(){
-      try{
-        const res = await fetch(ENDPOINTS.progress);
-        const j = await res.json();
-        setXP(j.xp || 0);
-      }catch(err){}
-    }
-
-    /* אתחול */
-    (async function init(){
-      await ensureUser();
-      await captureReferral();
-      particles();
-      appearOnScroll();
-      await refreshProgress();
-      await renderLeaderboardServer();
-
-      const d = load();
-      if(d.shareUrl){
-        document.getElementById('shareUrl').value = d.shareUrl;
-        revealPostConnect();
-      }
-
-      document.getElementById('drawCardBtn').addEventListener('click', drawCard);
-
-      await renderAdmin();
-    })();
-  </script>
-</body>
-</html>
+        list.innerHTML = arr.map(x=> `<li>${x.name}
