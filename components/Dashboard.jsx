@@ -1,83 +1,54 @@
 import { useEffect, useState } from 'react'
-import { supabase } from '../lib/supabase'
+import { getUserProgress, createUserProgress } from '../lib/database'
 import ProgressBar from './ProgressBar'
 import TaskCard from './TaskCard'
 
-export default function Dashboard() {
-  const [user, setUser] = useState(null)
+export default function Dashboard({ user }) {
   const [tasks, setTasks] = useState([])
   const [completedTasks, setCompletedTasks] = useState(new Set())
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    loadUserData()
-  }, [])
+    if (user) {
+      loadUserData()
+    }
+  }, [user])
 
   const loadUserData = async () => {
-    const { data: { user } } = await supabase.auth.getUser()
-    setUser(user)
-    
-    if (user) {
-      await Promise.all([fetchTasks(), fetchCompletedTasks(user.id)])
-    }
-    setLoading(false)
-  }
+    try {
+      // טען משימות מהשרת
+      const tasksRes = await fetch('/api/tasks')
+      const tasksData = await tasksRes.json()
+      setTasks(tasksData)
 
-  const fetchTasks = async () => {
-    const { data } = await supabase
-      .from('tasks')
-      .select('*')
-      .order('order_index')
-    setTasks(data || [])
-  }
-
-  const fetchCompletedTasks = async (userId) => {
-    const { data } = await supabase
-      .from('user_progress')
-      .select('task_id')
-      .eq('user_id', userId)
-      .eq('completed', true)
-    
-    if (data) {
-      setCompletedTasks(new Set(data.map(item => item.task_id)))
+      // טען התקדמות משתמש
+      const progress = await getUserProgress(user.id)
+      setCompletedTasks(new Set(progress.map(item => item.task_id)))
+    } catch (error) {
+      console.error('Error loading data:', error)
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleTaskComplete = (taskId) => {
-    setCompletedTasks(prev => new Set([...prev, taskId]))
+  const handleTaskComplete = async (taskId, submission) => {
+    try {
+      await createUserProgress(user.id, taskId, submission)
+      setCompletedTasks(prev => new Set([...prev, taskId]))
+    } catch (error) {
+      console.error('Error completing task:', error)
+    }
   }
 
   if (loading) {
     return <div className="loading">🔄 טוען...</div>
   }
 
-  if (!user) {
-    return (
-      <div className="auth-container">
-        <div className="welcome-card">
-          <h1>🎮 ברוכים הבאים למערכת הלימוד!</h1>
-          <p>התחבר כדי להתחיל את המסע הלימודי שלך</p>
-          <button 
-            onClick={() => supabase.auth.signInWithOAuth({ provider: 'github' })}
-            className="auth-btn"
-          >
-            📚 התחבר עם GitHub
-          </button>
-        </div>
-      </div>
-    )
-  }
-
   return (
     <div className="dashboard">
       <header className="dashboard-header">
         <h1>🎯 לוח הבקרה הלימודי</h1>
-        <button 
-          onClick={() => supabase.auth.signOut()}
-          className="logout-btn"
-        >
-          התנתק
-        </button>
+        <p>שלום {user.name}!</p>
       </header>
 
       <ProgressBar 
@@ -86,7 +57,7 @@ export default function Dashboard() {
       />
 
       <div className="tasks-section">
-        <h2>📋 המשימות שלך</h2>
+        <h2>📋 המשימות שלך ({tasks.length})</h2>
         <div className="tasks-grid">
           {tasks.map(task => (
             <TaskCard
