@@ -2,6 +2,7 @@
 let userId = null;
 let referralCount = 0;
 let pointsEarned = 0;
+let downloadsCount = 0;
 
 // אתחול האתר
 document.addEventListener('DOMContentLoaded', function() {
@@ -26,7 +27,7 @@ function checkReferral() {
     const urlParams = new URLSearchParams(window.location.search);
     const ref = urlParams.get('ref');
     
-    if (ref) {
+    if (ref && ref !== userId) { // מונע הפניה עצמית
         // שמירת פרטי ההפניה
         localStorage.setItem('referred_by', ref);
         
@@ -52,36 +53,22 @@ function initializeUser() {
 
 // טעינת נתוני המשתמש
 function loadUserData() {
-    // בדיקה אם יש נתונים שמורים
-    const savedReferralCount = localStorage.getItem('referral_count');
-    const savedPointsEarned = localStorage.getItem('points_earned');
-    
-    if (savedReferralCount) {
-        referralCount = parseInt(savedReferralCount);
-    }
-    
-    if (savedPointsEarned) {
-        pointsEarned = parseInt(savedPointsEarned);
-    }
-    
-    // עדכון התצוגה
-    updateStatsDisplay();
-    
-    // שליפת נתונים מהשרת (אם יש)
-    fetchUserDataFromServer();
-}
-
-// שליפת נתונים מהשרת
-function fetchUserDataFromServer() {
-    // כאן תוכל להוסיף קריאה לשרת שלך
-    // לדוגמה:
-    // fetch(`/api/user/${userId}`)
-    //   .then(response => response.json())
-    //   .then(data => {
-    //       referralCount = data.referrals;
-    //       pointsEarned = data.points;
-    //       updateStatsDisplay();
-    //   });
+    // קריאה לשרת לקבלת נתוני המשתמש
+    fetch(`api.php?action=get_user&user_id=${encodeURIComponent(userId)}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                referralCount = data.referrals;
+                pointsEarned = data.points;
+                downloadsCount = data.downloads;
+                updateStatsDisplay();
+            } else {
+                console.error('Error loading user data:', data.error);
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching user data:', error);
+        });
 }
 
 // עדכון תצוגת הסטטיסטיקה
@@ -92,22 +79,33 @@ function updateStatsDisplay() {
 
 // טעינת טבלת המובילים
 function loadLeaderboard() {
-    // כאן תוכל להוסיף קריאה לשרת שלך
-    // כרגע נשתמש בנתונים לדוגמה
-    const leaderboardData = [
-        { name: 'דניאל', referrals: 42 },
-        { name: 'שרה', referrals: 38 },
-        { name: 'משה', referrals: 35 },
-        { name: 'רחל', referrals: 29 },
-        { name: 'יוסף', referrals: 27 },
-        { name: 'ליאור', referrals: 24 },
-        { name: 'אביב', referrals: 22 },
-        { name: 'נעמה', referrals: 19 },
-        { name: 'איתי', referrals: 17 },
-        { name: 'מיכל', referrals: 15 }
+    fetch('api.php?action=get_leaderboard')
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                displayLeaderboard(data.leaderboard);
+            } else {
+                console.error('Error loading leaderboard:', data.error);
+                // הצגת נתוני דמה במקרה של שגיאה
+                displayLeaderboard(getDemoLeaderboard());
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching leaderboard:', error);
+            // הצגת נתוני דמה במקרה של שגיאה
+            displayLeaderboard(getDemoLeaderboard());
+        });
+}
+
+// נתוני דמה לטבלת המובילים
+function getDemoLeaderboard() {
+    return [
+        { name: 'דניאל', referrals: 42, points: 420 },
+        { name: 'שרה', referrals: 38, points: 380 },
+        { name: 'משה', referrals: 35, points: 350 },
+        { name: 'רחל', referrals: 29, points: 290 },
+        { name: 'יוסף', referrals: 27, points: 270 }
     ];
-    
-    displayLeaderboard(leaderboardData);
 }
 
 // הצגת טבלת המובילים
@@ -145,17 +143,17 @@ function setupEventListeners() {
     document.getElementById('copy-link').addEventListener('click', function() {
         const referralLink = document.getElementById('referral-link');
         referralLink.select();
-        document.execCommand('copy');
         
-        // אנימציה לאישור העתקה
-        const originalText = this.textContent;
-        this.textContent = 'הועתק!';
-        this.style.backgroundColor = '#4CAF50';
-        
-        setTimeout(() => {
-            this.textContent = originalText;
-            this.style.backgroundColor = '#6a11cb';
-        }, 2000);
+        // שימוש ב-Clipboard API מודרני
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(referralLink.value).then(() => {
+                showCopyFeedback(this);
+            });
+        } else {
+            // fallback ל-deprecated method
+            document.execCommand('copy');
+            showCopyFeedback(this);
+        }
     });
     
     // כפתורי שיתוף
@@ -172,40 +170,65 @@ function setupEventListeners() {
     });
 }
 
+// הצגת פידבק על העתקה
+function showCopyFeedback(button) {
+    const originalText = button.textContent;
+    button.textContent = 'הועתק!';
+    button.style.backgroundColor = '#4CAF50';
+    
+    setTimeout(() => {
+        button.textContent = originalText;
+        button.style.backgroundColor = '#6a11cb';
+    }, 2000);
+}
+
 // רישום הפניה בשרת
 function registerReferral(referrerId) {
-    // כאן תוכל להוסיף קריאה לשרת שלך
-    // לדוגמה:
-    // fetch('/api/referral', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({
-    //     referrer: referrerId,
-    //     referred: userId
-    //   })
-    // });
+    const formData = new FormData();
+    formData.append('referrer', referrerId);
+    formData.append('referred', userId);
     
-    // עדכון מקומי (לדמו)
-    console.log(`המשתמש ${userId} הוזמן על ידי ${referrerId}`);
+    fetch('api.php?action=register_referral', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Referral registered successfully');
+            // רענון הנתונים לאחר רישום הפניה
+            loadUserData();
+            loadLeaderboard();
+        } else {
+            console.error('Error registering referral:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error registering referral:', error);
+    });
 }
 
 // מעקב אחרי הורדה
 function trackDownload() {
-    // כאן תוכל להוסיף מעקב לשרת שלך
-    // לדוגמה:
-    // fetch('/api/track-download', {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    //   body: JSON.stringify({
-    //     user_id: userId
-    //   })
-    // });
+    const formData = new FormData();
+    formData.append('user_id', userId);
     
-    console.log(`המשתמש ${userId} לחץ על הורדה`);
+    fetch('api.php?action=track_download', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            console.log('Download tracked successfully');
+            downloadsCount++;
+        } else {
+            console.error('Error tracking download:', data.error);
+        }
+    })
+    .catch(error => {
+        console.error('Error tracking download:', error);
+    });
 }
 
 // שיתוף בוואטסאפ
@@ -230,25 +253,3 @@ function shareOnTelegram() {
     const url = `https://t.me/share/url?url=${encodeURIComponent(referralLink)}&text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
 }
-
-// פונקציה לדמו - הוספת הפניה (לצורך הדגמה)
-function addDemoReferral() {
-    referralCount++;
-    pointsEarned += 10;
-    
-    // עדכון האחסון המקומי
-    localStorage.setItem('referral_count', referralCount);
-    localStorage.setItem('points_earned', pointsEarned);
-    
-    // עדכון התצוגה
-    updateStatsDisplay();
-    
-    // עדכון טבלת המובילים
-    loadLeaderboard();
-    
-    // כאן תוכל להוסיף קריאה לשרת שלך
-    // updateUserOnServer(userId, referralCount, pointsEarned);
-}
-
-// קריאה לדמו - הסרה בהטמעה אמיתית
-// setInterval(addDemoReferral, 10000); // הוסף הפניה כל 10 שניות (לדמו בלבד)
