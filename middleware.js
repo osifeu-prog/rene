@@ -1,19 +1,17 @@
 import { NextResponse } from 'next/server'
 
-export function middleware(request) {
-  // הגנה על נתיבים קריטיים
-  const criticalPaths = ['/api/admin', '/api/database']
-  
-  if (criticalPaths.some(path => request.nextUrl.pathname.startsWith(path))) {
-    return NextResponse.redirect(new URL('/unauthorized', request.url))
+export function middleware(req) {
+  const { pathname } = req.nextUrl
+  // Protect /dashboard and /api/private (example)
+  if (pathname.startsWith('/dashboard')) {
+    const token = req.cookies['sb-access-token'] || req.cookies['sb-session']
+    if (!token) {
+      const url = req.nextUrl.clone()
+      url.pathname = '/'
+      return NextResponse.redirect(url)
+    }
   }
-
   return NextResponse.next()
 }
 
-export const config = {
-  matcher: [
-    '/api/admin/:path*',
-    '/api/database/:path*',
-  ]
-}
+export const config = { matcher: ['/dashboard/:path*'] }
