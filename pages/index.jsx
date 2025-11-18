@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { supabase } from '../lib/supabase'
 import Head from 'next/head'
+import Link from 'next/link'
 
 export default function Home() {
   const [user, setUser] = useState(null)
@@ -106,7 +107,7 @@ export default function Home() {
         )}
 
         {/* Main Content */}
-        <div className="relative z-10 w-full max-w-4xl">
+        <div className="relative z-10 w-full max-w-6xl">
           {/* Hero Section */}
           <div className="text-center mb-16">
             <div className="animate-float">
@@ -132,39 +133,73 @@ export default function Home() {
                 <p className="text-white/80 text-lg">התחברו וקבלו מתנות מיוחדות</p>
               </div>
 
-              {/* Benefits Grid */}
-              <div className="grid md:grid-cols-2 gap-6 mb-8">
-                <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm border border-white/30 transform hover:scale-105 transition-all duration-300">
-                  <div className="flex items-center space-x-3 space-x-reverse mb-3">
-                    <div className="text-2xl">💎</div>
-                    <h3 className="font-bold text-white text-lg">10 נקודות מתנה</h3>
+              {/* Features Grid - Updated with more columns */}
+              <div className="grid md:grid-cols-3 gap-6 mb-8">
+                <Link href="/learn-more/experiential-learning">
+                  <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm border border-white/30 transform hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div className="flex items-center space-x-3 space-x-reverse mb-3">
+                      <div className="text-2xl">👨‍💻</div>
+                      <h3 className="font-bold text-white text-lg">למידה חווייתית</h3>
+                    </div>
+                    <p className="text-white/80 text-sm">למדו תכנות דרך משחקים ואתגרים במקום שיעורים משעממים</p>
+                    <div className="mt-2 text-blue-300 text-xs">לחץ לפרטים נוספים →</div>
                   </div>
-                  <p className="text-white/80 text-sm">קבלו נקודות מיד עם ההצטרפות</p>
-                </div>
+                </Link>
                 
-                <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm border border-white/30 transform hover:scale-105 transition-all duration-300">
-                  <div className="flex items-center space-x-3 space-x-reverse mb-3">
-                    <div className="text-2xl">🎁</div>
-                    <h3 className="font-bold text-white text-lg">קלף אספנות ראשון</h3>
+                <Link href="/learn-more/practical-tasks">
+                  <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm border border-white/30 transform hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div className="flex items-center space-x-3 space-x-reverse mb-3">
+                      <div className="text-2xl">🎯</div>
+                      <h3 className="font-bold text-white text-lg">משימות מעשיות</h3>
+                    </div>
+                    <p className="text-white/80 text-sm">צרו קוד אמיתי שירוץ במחשב או בטלפון שלכם</p>
+                    <div className="mt-2 text-blue-300 text-xs">לחץ לפרטים נוספים →</div>
                   </div>
-                  <p className="text-white/80 text-sm">קיבלו קלף מיוחד להתחלה</p>
-                </div>
+                </Link>
                 
-                <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm border border-white/30 transform hover:scale-105 transition-all duration-300">
-                  <div className="flex items-center space-x-3 space-x-reverse mb-3">
-                    <div className="text-2xl">🌐</div>
-                    <h3 className="font-bold text-white text-lg">דף נחיתה אישי</h3>
+                <Link href="/learn-more/card-collection">
+                  <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm border border-white/30 transform hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div className="flex items-center space-x-3 space-x-reverse mb-3">
+                      <div className="text-2xl">🃏</div>
+                      <h3 className="font-bold text-white text-lg">אוסף קלפים</h3>
+                    </div>
+                    <p className="text-white/80 text-sm">אספו קלפים מיוחדים על כל משימה שתפתרו</p>
+                    <div className="mt-2 text-blue-300 text-xs">לחץ לפרטים נוספים →</div>
                   </div>
-                  <p className="text-white/80 text-sm">צרו אתר משלכם בתוך דקות</p>
-                </div>
-                
-                <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm border border-white/30 transform hover:scale-105 transition-all duration-300">
-                  <div className="flex items-center space-x-3 space-x-reverse mb-3">
-                    <div className="text-2xl">📚</div>
-                    <h3 className="font-bold text-white text-lg">לימוד חווייתי</h3>
+                </Link>
+
+                <Link href="/learn-more/progress-tracking">
+                  <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm border border-white/30 transform hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div className="flex items-center space-x-3 space-x-reverse mb-3">
+                      <div className="text-2xl">📈</div>
+                      <h3 className="font-bold text-white text-lg">מעקב התקדמות</h3>
+                    </div>
+                    <p className="text-white/80 text-sm">ראו כמה התקדמתם וקבלו משימות חדשות</p>
+                    <div className="mt-2 text-blue-300 text-xs">לחץ לפרטים נוספים →</div>
                   </div>
-                  <p className="text-white/80 text-sm">למדו דרך משחקים ואתגרים</p>
-                </div>
+                </Link>
+
+                <Link href="/learn-more/personal-website">
+                  <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm border border-white/30 transform hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div className="flex items-center space-x-3 space-x-reverse mb-3">
+                      <div className="text-2xl">🌐</div>
+                      <h3 className="font-bold text-white text-lg">אתר אישי</h3>
+                    </div>
+                    <p className="text-white/80 text-sm">בנו אתר משלכם ושיווקו את המוצרים שלכם</p>
+                    <div className="mt-2 text-blue-300 text-xs">לחץ לפרטים נוספים →</div>
+                  </div>
+                </Link>
+
+                <Link href="/learn-more/economic-growth">
+                  <div className="bg-white/20 rounded-2xl p-6 backdrop-blur-sm border border-white/30 transform hover:scale-105 transition-all duration-300 cursor-pointer">
+                    <div className="flex items-center space-x-3 space-x-reverse mb-3">
+                      <div className="text-2xl">💰</div>
+                      <h3 className="font-bold text-white text-lg">צמיחה כלכלית</h3>
+                    </div>
+                    <p className="text-white/80 text-sm">מכרו את הפרויקטים שלכם וצמחו כלכלית</p>
+                    <div className="mt-2 text-blue-300 text-xs">לחץ לפרטים נוספים →</div>
+                  </div>
+                </Link>
               </div>
 
               {/* GitHub Explanation */}
@@ -191,6 +226,31 @@ export default function Home() {
                     <span>כלים מקצועיים לתכנות</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Community Links */}
+              <div className="grid md:grid-cols-2 gap-4 mb-6">
+                <a 
+                  href="https://github.com/osifeu-prog/rene/discussions" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-green-500/20 hover:bg-green-500/30 border border-green-400/30 rounded-2xl p-4 text-center transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className="text-2xl mb-2">💬</div>
+                  <h4 className="font-bold text-white">פורום דיונים פעיל</h4>
+                  <p className="text-white/80 text-sm mt-1">שאל שאלות ושתף רעיונות עם הקהילה</p>
+                </a>
+                
+                <a 
+                  href="https://github.com/osifeu-prog/rene/issues" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="bg-red-500/20 hover:bg-red-500/30 border border-red-400/30 rounded-2xl p-4 text-center transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className="text-2xl mb-2">🐛</div>
+                  <h4 className="font-bold text-white">דיווח באגים</h4>
+                  <p className="text-white/80 text-sm mt-1">דווח על תקלות ועזור לנו לשפר</p>
+                </a>
               </div>
 
               {/* Login Button */}
@@ -234,6 +294,21 @@ export default function Home() {
               }} />
             </div>
           )}
+
+          {/* Game Explanation Section */}
+          <div className="mt-12 text-center">
+            <Link href="/how-it-works">
+              <div className="bg-white/10 backdrop-blur-lg rounded-3xl p-8 border border-white/20 shadow-2xl transform hover:scale-105 transition-all duration-300 cursor-pointer">
+                <h3 className="text-3xl font-bold text-white mb-4">🎮 איך המשחק עובד?</h3>
+                <p className="text-white/80 text-lg mb-4">
+                  גלו את כל הסודות של Rene - ממשימה ראשונה עד למוצר הראשון שלכם!
+                </p>
+                <div className="text-blue-300 font-bold text-lg">
+                  לחצו כאן להסבר מלא ←
+                </div>
+              </div>
+            </Link>
+          </div>
 
           {/* Stats Footer */}
           <div className="text-center mt-12 animate-fade-in-up" style={{animationDelay: '0.5s'}}>
