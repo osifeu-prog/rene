@@ -4,14 +4,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>NIFTII — מערכת לימוד תכנות משחקית</title>
-  <meta name="description" content="NIFTII — פתיחת פרויקט ראשון בגיטהאב, XP, שיתופים אמיתיים, מדריך מלא ליצירת דף נחיתה אישי בעזרת AI, משחק קלפים עם NFT, ושמירת נתוני שחקנים בשרת הראשי." />
+  <meta name="description" content="NIFTII — פתיחת פרויקט ראשון בגיטהאב, XP, שיתופים אמיתיים, מדריך מלא ליצירת דף נחיתה אישי בעזרת AI, משחק קלפים NFT, צ’אט, חידון, גרף שיתופים, והצבעה לשם הרשת." />
   <meta name="theme-color" content="#0d1024" />
   <style>
-    /* צבעים, נגישות והגדרות */
     :root{
       --bg1:#0d1024; --bg2:#1a1642;
       --text:#ffffff; --muted:#e6f0ff;
-      --accent:#ff4d8f; --accent2:#00ffe1; --accent3:#7cfb00; --accent4:#ffd93d;
+      --accent:#ff4d8f; --accent2:#00ffe1; --accent3:#7cfb00; --accent4:#ffd93d; --info:#4da6ff;
       --glass:rgba(255,255,255,0.10); --glass-strong:rgba(255,255,255,0.16);
       --border:rgba(255,255,255,0.22);
       --shadow:0 12px 28px rgba(0,0,0,0.45);
@@ -32,7 +31,7 @@
     .container{max-width:1200px;margin:0 auto;padding:2rem}
     .section{margin:2rem 0}
 
-    /* רקע חלק ובעל ניגודיות טובה */
+    /* רקע חלק */
     .bg{position:fixed;inset:0;z-index:-3;overflow:hidden}
     canvas#particles{position:absolute;inset:0;opacity:0.22;will-change:transform}
     .orb{
@@ -57,14 +56,12 @@
     }
     @keyframes waveFloat{0%,100%{transform: translateY(0) translateZ(-200px)}50%{transform: translateY(-10px) translateZ(-200px)}}
 
-    /* הופעה חלקה */
+    /* הופעת בלוקים */
     .appear{opacity:0; transform: translateY(14px); will-change:opacity,transform}
     .appear.in{opacity:1; transform: translateY(0); transition: opacity .5s ease, transform .5s ease}
 
-    /* Hero נגיש */
-    .hero{
-      text-align:center; padding:5rem 1rem 2rem;
-    }
+    /* Hero */
+    .hero{ text-align:center; padding:5rem 1rem 2rem; }
     .title3d{
       display:inline-block; font-size: clamp(2rem,5vw,4rem);
       letter-spacing:.6px; background: linear-gradient(90deg,#fff,#e7fffb 30%,#ffe1ec 60%,#fff 90%);
@@ -84,7 +81,7 @@
     }
     .btn.primary{background: linear-gradient(135deg, var(--accent), #ff7bb0); box-shadow: 0 8px 24px rgba(255,77,143,.45)}
     .btn.success{background: linear-gradient(135deg, var(--accent3), #a9ff58); color:#102b00; font-weight:700}
-    .btn.info{background: linear-gradient(135deg, #4da6ff, #7bd3ff)}
+    .btn.info{background: linear-gradient(135deg, var(--info), #7bd3ff)}
     .btn.warn{background: linear-gradient(135deg, var(--accent4), #ffa502); color:#1f1400; font-weight:700}
     .btn:hover{transform: translate3d(0,-3px,0)}
     .btn:active{transform: translate3d(0,0,0)}
@@ -106,7 +103,7 @@
     .card h3{ margin:0 0 .6rem; font-size:1.25rem; color:#fff }
     .card p{ color:#eaeaea }
 
-    /* בר התקדמות ותגי הישגים */
+    /* ברי התקדמות ותגים */
     .progress-wrap{margin:1.2rem 0;padding:1rem;background: var(--glass-strong);border:1px solid var(--border);border-radius:12px}
     .progress-label{display:flex;justify-content:space-between;align-items:center;margin-bottom:.6rem}
     .progress-bar{height:10px;border-radius:999px;background:rgba(255,255,255,0.12);overflow:hidden}
@@ -175,27 +172,23 @@
     .leaderboard ul{ list-style:none; margin:0; padding:0; display:grid; gap:.4rem }
     .leaderboard li{ background: rgba(255,255,255,.10); padding:.6rem .8rem; border-radius:12px; color:#fff }
 
-    /* פוסט-חיבור */
-    .post-connect{
-      margin:1.5rem 0; padding:1.2rem; border-radius:16px;
-      background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18);
-      display:none; color:#fff;
-    }
-
-    /* אזור הצבעה לשם הרשת */
-    .vote{
-      margin:1.5rem 0; padding:1.2rem; border-radius:16px;
-      background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); color:#fff; display:none;
-    }
+    /* פוסט-חיבור + הצבעה */
+    .post-connect{ margin:1.5rem 0; padding:1.2rem; border-radius:16px; background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); display:none; color:#fff; }
+    .vote{ margin:1.5rem 0; padding:1.2rem; border-radius:16px; background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); color:#fff; display:none; }
     .vote input{padding:.6rem;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff;margin:.3rem 0;width:100%}
 
-    /* פרופיל אישי */
-    .profile{
-      margin:1.5rem 0; padding:1.2rem; border-radius:16px;
-      background: rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18); color:#fff;
-    }
+    /* פרופיל אישי, צ'אט, גרף, הישגים */
+    .profile{ margin:1.5rem 0; padding:1.2rem; border-radius:16px; background: rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18); color:#fff; }
     .profile-grid{display:grid;grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:1rem}
     .profile-card{background:rgba(255,255,255,.10);border:1px solid var(--border);border-radius:12px;padding:1rem}
+
+    .chat{ margin:1.5rem 0; padding:1.2rem; border-radius:16px; background: rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18); color:#fff; }
+    .chat-box{height:240px;overflow-y:auto;background:rgba(255,255,255,.08);padding:1rem;border-radius:12px}
+    .chat-input{display:flex;gap:.6rem;margin-top:.6rem}
+    .chat-input input{flex:1;padding:.6rem;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.1);color:#fff}
+
+    .graph{ margin:1.5rem 0; padding:1.2rem; border-radius:16px; background: rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18); color:#fff; }
+    .achievements{ margin:1.5rem 0; padding:1.2rem; border-radius:16px; background: rgba(255,255,255,.10); border:1px solid rgba(255,255,255,.18); color:#fff; }
 
     /* אדמין */
     .admin{ margin:2rem 0; padding:1rem; border-radius:14px; background: rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.18); color:#fff }
@@ -232,7 +225,6 @@
         <button class="btn info" id="toggleTheme">🌓 מצב כהה/בהיר</button>
       </div>
 
-      <!-- התקדמות כללית -->
       <div class="progress-wrap" id="progressWrap">
         <div class="progress-label">
           <strong>התקדמות במשימות</strong>
@@ -240,10 +232,10 @@
         </div>
         <div class="progress-bar"><div id="progressBarInner"></div></div>
         <div class="badges" id="badgesWrap">
-          <span class="badge">התחלת פרויקט</span>
-          <span class="badge">חיבור דף</span>
-          <span class="badge">שיתוף ראשון</span>
-          <span class="badge">יצירת קלף</span>
+          <span class="badge" id="badgeStart">התחלת פרויקט</span>
+          <span class="badge" id="badgeConnect">חיבור דף</span>
+          <span class="badge" id="badgeShare">שיתוף ראשון</span>
+          <span class="badge" id="badgeMint">יצירת קלף</span>
         </div>
       </div>
     </section>
@@ -300,7 +292,6 @@
       </div>
       <p>לאחר יצירת הקוד, העתק אותו לקובץ <code>index.html</code> בריפו שלך, והפעל GitHub Pages כדי לקבל לינק אישי.</p>
 
-      <!-- מדריך קבצים והסברים -->
       <div class="profile">
         <h3>📁 אילו קבצים להעתיק ומה התפקיד שלהם</h3>
         <div class="profile-grid">
@@ -317,20 +308,19 @@
             <p>לוגיקה: משחק קלפים, שמירת תשובות, שיתופים, שמירת נתוני שחקנים.</p>
           </div>
         </div>
-        <p>אם AI מחזיר כמה קבצים — ניתן לאחד אותם בתוך <code>index.html</code> בעזרת תגי <code>&lt;style&gt;</code> ו־<code>&lt;script&gt;</code>.</p>
+        <p>אם AI מחזיר כמה קבצים — אפשר לאחד את הכל בתוך <code>index.html</code> בעזרת תגי <code>&lt;style&gt;</code> ו־<code>&lt;script&gt;</code>.</p>
       </div>
     </section>
 
-    <!-- מיני-משחק קלפים עם תשובה -->
+    <!-- מיני-משחק קלפים + NFT דמה -->
     <section class="game appear section" aria-label="מיני-משחק קלפים">
       <h2>🎲 להגרלת קלף תכנות</h2>
       <div>
         <button class="btn primary" id="drawCardBtn" aria-label="הגרל קלף תכנות">הגרל קלף!</button>
-        <button class="btn warn" id="mintNftBtn" title="יצירת קלף NFT מדמה">🪙 יצירת קלף NFT (דמה)</button>
+        <button class="btn warn" id="mintNftBtn" title="יצירת קלף NFT דמה">🪙 יצירת קלף NFT (דמה)</button>
       </div>
       <div class="deck" id="deck"></div>
 
-      <!-- מקום לכתוב תשובה -->
       <div id="answerArea" class="answer-area" style="display:none;">
         <h3>✍️ רנה, כתוב כאן את הפתרון שלך:</h3>
         <textarea id="studentAnswer" class="answer" rows="5" placeholder="הקלד כאן את הפתרון שלך לקלף/אתגר"></textarea>
@@ -341,7 +331,6 @@
         <p class="xp" id="answerXP" style="display:none;">+10 XP על כתיבת תשובה</p>
       </div>
 
-      <!-- יצירת קלף NFT דמה -->
       <div id="nftArea" class="answer-area" style="display:none;">
         <h3>🪙 יצירת קלף NFT (דמה)</h3>
         <p>העלה תמונה שתהפוך לקלף דמה, הוסף תיאור קצר ומחיר התחלתי למסחר.</p>
@@ -356,10 +345,53 @@
       </div>
     </section>
 
-    <!-- שיתוף (לפני חיבור) -->
+    <!-- חידון תכנות -->
+    <section class="achievements appear section" id="quizSection">
+      <h2>🧑‍🎓 חידון תכנות</h2>
+      <p>ענה על שאלות וקבל XP על תשובות נכונות. זה עוזר לך להשתפר בקוד ולצבור נקודות.</p>
+      <button class="btn primary" id="startQuizBtn">התחל חידון</button>
+      <div id="quizArea" style="display:none;margin-top:.8rem;">
+        <p id="quizQuestion"></p>
+        <div id="quizOptions" style="display:grid;gap:.5rem;"></div>
+        <div style="margin-top:.6rem">
+          <button class="btn success" id="submitQuizBtn">שלח תשובה</button>
+          <span class="xp" id="quizXP" style="display:none;margin-inline-start:.6rem;">+5 XP תשובה נכונה</span>
+        </div>
+        <p id="quizFeedback" style="margin-top:.6rem;color:#e6f0ff;"></p>
+      </div>
+    </section>
+
+    <!-- צ'אט חי -->
+    <section class="chat appear section" id="chatSection">
+      <h2>💬 צ'אט חי</h2>
+      <div class="chat-box" id="chatMessages" aria-live="polite"></div>
+      <div class="chat-input">
+        <input id="chatInput" type="text" placeholder="כתוב הודעה לחברים..." />
+        <button class="btn info" id="sendChatBtn">שלח</button>
+      </div>
+    </section>
+
+    <!-- גרף שיתופים -->
+    <section class="graph appear section" id="graphSection">
+      <h2>📊 גרף שיתופים</h2>
+      <canvas id="shareGraph" width="800" height="320" style="max-width:100%;border-radius:12px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18)"></canvas>
+    </section>
+
+    <!-- הישגים -->
+    <section class="achievements appear section" id="achievementsSection">
+      <h2>🏅 הישגים</h2>
+      <div class="badges" id="achievementsBadges">
+        <span class="badge" id="badgeStart">התחלת פרויקט</span>
+        <span class="badge" id="badgeShare">שיתוף ראשון</span>
+        <span class="badge" id="badgeMint">יצירת קלף NFT</span>
+        <span class="badge" id="badgeVote">הצבעה לרשת</span>
+      </div>
+    </section>
+
+    <!-- שיתוף -->
     <section class="share appear section" aria-label="שיתוף הדף האישי">
       <h2>🔗 שתף את העמוד שלך</h2>
-      <p>אחרי שחיברת את דף הנחיתה, שתף אותו עם חברים וקבל XP על כל הצטרפות! לאחר 24 שיתופים — תיפתח הצבעה לשם הרשת.</p>
+      <p>אחרי שחיברת את דף הנחיתה, שתף אותו עם חברים וקבל XP על כל הצטרפות! אחרי 24 שיתופים — תיפתח הצבעה לשם הרשת.</p>
       <div>
         <input id="shareUrl" type="text" placeholder="הדבק כאן את כתובת הדף שלך (GitHub Pages)" aria-label="כתובת הדף שלך"/>
         <button class="btn" id="saveShareUrl" aria-label="שמור כתובת">💾 שמור כתובת</button>
@@ -378,7 +410,7 @@
       </div>
     </section>
 
-    <!-- אזור הצבעה לשם הרשת (נפתח אחרי 24 שיתופים) -->
+    <!-- הצבעה לשם הרשת -->
     <section class="vote appear section" id="voteSection">
       <h2>🗳️ הצבעה לשם הרשת</h2>
       <p>הגעתם ל־24 שיתופים! עכשיו אפשר להציע שם לרשת ולהצביע יחד.</p>
@@ -390,7 +422,7 @@
       <div id="votesResult" style="margin-top:.6rem"></div>
     </section>
 
-    <!-- לוח מובילים (אמיתי מהשרת) -->
+    <!-- לוח מובילים אמיתי -->
     <section class="leaderboard appear section" aria-label="לוח מובילים">
       <h2>🏆 לוח מובילים</h2>
       <ul id="leaderList"></ul>
@@ -420,7 +452,7 @@
       </div>
     </section>
 
-    <!-- אדמין (אופציונלי עם ?admin=1) -->
+    <!-- אדמין -->
     <section class="admin appear section" id="adminPanel" style="display:none" aria-label="לוח אדמין">
       <h2>🛠️ אדמין — מעקב הפצה והתקדמות</h2>
       <div class="admin-grid">
@@ -446,18 +478,20 @@
     /* הגדרות API — שרת ראשי לשמירת נתונים */
     const API_BASE = 'https://rene-production.up.railway.app';
     const ENDPOINTS = {
-      signup: API_BASE + '/api/signup',                    // POST {userId, referrerId?}
-      newRepo: API_BASE + '/api/tasks/first-repo',         // POST {userId}
-      connectLanding: API_BASE + '/api/tasks/connect-landing', // POST {userId, url}
-      shareCopy: API_BASE + '/api/share/copy',             // POST {userId}
-      shareCreate: API_BASE + '/api/share',                // POST {userId, url}
-      inviteLink: API_BASE + '/api/invite',                // POST {userId} -> {inviteUrl}
-      progress: API_BASE + '/api/progress',                // GET -> {xp, tasksCompleted, shares, students, totalXP}
-      leaderboard: API_BASE + '/api/leaderboard',          // GET -> [{name,xp,rankIcon?}]
-      referral: API_BASE + '/api/referral',                // POST {referrerId, newUserFingerprint}
-      answers: API_BASE + '/api/answers',                  // POST {userId, cardTitle, answer}
-      profile: API_BASE + '/api/profile',                  // POST {userId, name, bio, avatar}
-      votes: API_BASE + '/api/votes'                       // POST {userId, nameProposal} | GET
+      signup: API_BASE + '/api/signup',
+      newRepo: API_BASE + '/api/tasks/first-repo',
+      connectLanding: API_BASE + '/api/tasks/connect-landing',
+      shareCopy: API_BASE + '/api/share/copy',
+      shareCreate: API_BASE + '/api/share',
+      inviteLink: API_BASE + '/api/invite',
+      progress: API_BASE + '/api/progress',
+      leaderboard: API_BASE + '/api/leaderboard',
+      referral: API_BASE + '/api/referral',
+      answers: API_BASE + '/api/answers',
+      profile: API_BASE + '/api/profile',
+      votes: API_BASE + '/api/votes',
+      chat: API_BASE + '/api/chat',
+      sharesGraph: API_BASE + '/api/shares-graph'
     };
 
     /* זיהוי משתמש מקומי */
@@ -489,7 +523,7 @@
       return d.userId;
     }
 
-    /* הופעת בלוקים עם IntersectionObserver */
+    /* הופעת בלוקים */
     function appearOnScroll(){
       const els = document.querySelectorAll('.appear');
       const io = new IntersectionObserver((entries)=>{
@@ -561,7 +595,7 @@
 
     function updateProgress(){
       const d = load();
-      const total = 3; // firstRepo, connectedLanding, firstShare
+      const total = 3;
       const done = (d.tasks.firstRepo?1:0) + (d.tasks.connectedLanding?1:0) + (d.tasks.firstShare?1:0);
       const percent = Math.round((done/total)*100);
       const bar = document.getElementById('progressBarInner');
@@ -571,12 +605,15 @@
 
       const shareLabel = document.getElementById('shareCountLabel');
       if(shareLabel) shareLabel.textContent = `שיתופים: ${d.sharesCount} | +10 XP על שיתוף ראשון`;
-      // פתיחת הצבעה לאחר 24 שיתופים
       const vote = document.getElementById('voteSection');
       if(vote) vote.style.display = d.sharesCount >= 24 ? 'block' : 'none';
+
+      document.getElementById('badgeStart').style.background = d.tasks.firstRepo ? 'rgba(0,255,225,.25)' : 'rgba(255,255,255,.08)';
+      document.getElementById('badgeConnect').style.background = d.tasks.connectedLanding ? 'rgba(0,255,225,.25)' : 'rgba(255,255,255,.08)';
+      document.getElementById('badgeShare').style.background = d.tasks.firstShare ? 'rgba(0,255,225,.25)' : 'rgba(255,255,255,.08)';
     }
 
-    /* כרטיסי אתגר */
+    /* קלפים ואתגרים */
     const cards = [
       { title:"💡 פונקציה כפול 2", text:"כתבו פונקציה שמחזירה מספר כפול 2.", xp:5 },
       { title:"🔥 ניחוש מספרים", text:"צרו משחק שמגריל מספר 1–50 ואתם מנחשים.", xp:10 },
@@ -598,7 +635,6 @@
       `;
       deck.prepend(el);
       requestAnimationFrame(()=>{ el.classList.remove('hide'); el.classList.add('show'); });
-      // הצגת אזור תשובה
       document.getElementById('answerArea').style.display = 'block';
       document.getElementById('studentAnswer').value = load().answerDraft || '';
       document.getElementById('submitAnswerBtn').onclick = ()=> submitAnswer(card.title);
@@ -641,7 +677,7 @@
       alert('הטיוטה נשמרה מקומית.');
     }
 
-    /* יצירת קלף NFT דמה */
+    /* NFT דמה */
     function openMintNft(){
       document.getElementById('nftArea').style.display = 'block';
     }
@@ -666,10 +702,11 @@
       try{
         await fetch(ENDPOINTS.progress, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, xp:15, event:'mint_nft_demo', title }) });
         await refreshProgress();
+        document.getElementById('badgeMint').style.background = 'rgba(0,255,225,.25)';
       }catch(err){}
     }
 
-    /* מעקב משימה ראשונה */
+    /* משימה ראשונה: סימון פתיחת ריפו */
     document.querySelectorAll('[data-track]').forEach(el=>{
       el.addEventListener('click', async ()=>{
         const d = load();
@@ -732,6 +769,7 @@
         await navigator.clipboard.writeText(d.shareUrl);
         await ensureUser();
         d.sharesCount = (d.sharesCount || 0) + 1;
+        d.tasks.firstShare = true;
         save(d);
         await fetch(ENDPOINTS.shareCopy, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId }) });
         await refreshProgress();
@@ -778,7 +816,7 @@
       }catch(err){}
     }
 
-    /* Leaderboard מהשרת בלבד */
+    /* לוח מובילים מהשרת בלבד */
     async function renderLeaderboardServer(){
       try{
         const res = await fetch(ENDPOINTS.leaderboard);
@@ -792,7 +830,7 @@
       }
     }
 
-    /* הצבעות מהשרת */
+    /* הצבעות */
     async function submitVote(){
       const nameProposal = (document.getElementById('networkNameProposal').value || '').trim();
       if(!nameProposal){ alert('נא להציע שם לרשת.'); return; }
@@ -801,6 +839,7 @@
         await ensureUser();
         await fetch(ENDPOINTS.votes, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, nameProposal }) });
         document.getElementById('votesResult').innerHTML = `<div class="card">ההצעה נשלחה: ${nameProposal}</div>`;
+        document.getElementById('badgeVote').style.background = 'rgba(0,255,225,.25)';
       }catch(err){
         alert('שליחת ההצעה נכשלה כרגע, נסה שוב.');
       }
@@ -816,42 +855,6 @@
     }
     document.getElementById('submitVoteBtn')?.addEventListener('click', submitVote);
     document.getElementById('seeVotesBtn')?.addEventListener('click', seeVotes);
-
-    /* אדמין מהשרת (אם קיים) */
-    function isAdmin(){ return new URLSearchParams(location.search).get('admin') === '1'; }
-    async function renderAdmin(){
-      const panel = document.getElementById('adminPanel');
-      if(!isAdmin()){ panel.style.display='none'; return; }
-      panel.style.display='block';
-      try{
-        const res = await fetch(ENDPOINTS.progress);
-        const data = await res.json();
-        document.getElementById('adminStudentsCount').textContent = data.students || 0;
-        document.getElementById('adminShares').textContent = data.shares || 0;
-        document.getElementById('adminTotalXP').textContent = data.totalXP || 0;
-        document.getElementById('adminTasks').textContent = data.tasksCompleted || 0;
-        document.getElementById('exportData').onclick = async ()=>{
-          const res2 = await fetch(ENDPOINTS.progress + '?export=1');
-          const blob = await res2.blob();
-          const url = URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url; a.download = 'niftii_server_data.json'; a.click();
-          URL.revokeObjectURL(url);
-        };
-      }catch(err){}
-    }
-
-    /* רענון XP מהשרת */
-    async function refreshProgress(){
-      try{
-        const res = await fetch(ENDPOINTS.progress);
-        const j = await res.json();
-        setXP(j.xp || 0);
-        updateProgress();
-      }catch(err){
-        updateProgress();
-      }
-    }
 
     /* פרופיל אישי שמירה */
     document.getElementById('saveProfileBtn')?.addEventListener('click', async ()=>{
@@ -881,6 +884,137 @@
       }
     });
 
+    /* חידון תכנות */
+    const QUIZ = [
+      { q:"מה תחזיר הפונקציה f(x)=x*2 עבור x=5?", opts:["5","10","2","20"], correct:1, explain:"x*2 עבור 5 הוא 10." },
+      { q:"איזו לולאה מדפיסה 1 עד 3?", opts:["for(i=1;i<=3;i++)","for(i=0;i<3;i++)","while(i<3)","for(i=3;i>=1;i--)"], correct:0, explain:"לולאת for עם התחלה ב-1 וסוף ב-3." },
+      { q:"מה עושה if (x > 0)?", opts:["בודק אם x קטן מאפס","בודק אם x גדול מאפס","בודק אם x שווה לאפס","מדפיס את x"], correct:1, explain:"תנאי שבודק האם x גדול מאפס." }
+    ];
+    let quizIndex = 0, selectedOpt = null;
+
+    function startQuiz(){
+      quizIndex = 0; selectedOpt = null;
+      document.getElementById('quizArea').style.display='block';
+      renderQuizQuestion();
+    }
+    function renderQuizQuestion(){
+      const item = QUIZ[quizIndex];
+      document.getElementById('quizQuestion').textContent = item.q;
+      const wrap = document.getElementById('quizOptions');
+      wrap.innerHTML = '';
+      item.opts.forEach((opt, idx)=>{
+        const btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.textContent = opt;
+        btn.onclick = ()=> { selectedOpt = idx; highlightOption(wrap, idx); };
+        wrap.appendChild(btn);
+      });
+      document.getElementById('quizFeedback').textContent = '';
+      document.getElementById('quizXP').style.display = 'none';
+    }
+    function highlightOption(wrap, idx){
+      [...wrap.children].forEach((b,i)=> b.style.outline = i===idx ? '2px solid #00ffe1' : 'none');
+    }
+    async function submitQuiz(){
+      const item = QUIZ[quizIndex];
+      if(selectedOpt == null){ alert('נא לבחור תשובה.'); return; }
+      const correct = selectedOpt === item.correct;
+      document.getElementById('quizFeedback').textContent = correct ? 'נכון! ' + item.explain : 'לא נכון. ' + item.explain;
+      if(correct){
+        document.getElementById('quizXP').style.display = 'inline-block';
+        const d = load();
+        try{
+          await ensureUser();
+          await fetch(ENDPOINTS.progress, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, xp:5, event:'quiz_correct', title:item.q }) });
+          await refreshProgress();
+        }catch(err){}
+      }
+      quizIndex = (quizIndex + 1) % QUIZ.length;
+      setTimeout(renderQuizQuestion, 700);
+    }
+    document.getElementById('startQuizBtn')?.addEventListener('click', startQuiz);
+    document.getElementById('submitQuizBtn')?.addEventListener('click', submitQuiz);
+
+    /* צ'אט חי */
+    async function loadChat(){
+      try{
+        const res = await fetch(ENDPOINTS.chat);
+        const arr = await res.json();
+        const box = document.getElementById('chatMessages');
+        box.innerHTML = arr.map(m=> `<div><strong>${m.name||'חבר'}:</strong> ${m.message}</div>`).join('');
+        box.scrollTop = box.scrollHeight;
+      }catch(err){}
+    }
+    async function sendChat(){
+      const val = (document.getElementById('chatInput').value || '').trim();
+      if(!val) return;
+      const d = load();
+      try{
+        await ensureUser();
+        await fetch(ENDPOINTS.chat, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, message:val }) });
+        document.getElementById('chatInput').value='';
+        await loadChat();
+      }catch(err){}
+    }
+    document.getElementById('sendChatBtn')?.addEventListener('click', sendChat);
+
+    /* גרף שיתופים */
+    async function renderSharesGraph(){
+      try{
+        const res = await fetch(ENDPOINTS.sharesGraph);
+        const arr = await res.json(); // [{t,count}]
+        const canvas = document.getElementById('shareGraph');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0,0,canvas.width,canvas.height);
+        ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        const maxCount = Math.max(...arr.map(p=>p.count), 1);
+        arr.forEach((p, i)=>{
+          const x = (i/(arr.length-1)) * (canvas.width-40) + 20;
+          const y = canvas.height - ((p.count/maxCount)* (canvas.height-40)) - 20;
+          if(i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+        });
+        ctx.stroke();
+      }catch(err){}
+    }
+
+    /* אדמין מהשרת */
+    function isAdmin(){ return new URLSearchParams(location.search).get('admin') === '1'; }
+    async function renderAdmin(){
+      const panel = document.getElementById('adminPanel');
+      if(!isAdmin()){ panel.style.display='none'; return; }
+      panel.style.display='block';
+      try{
+        const res = await fetch(ENDPOINTS.progress);
+        const data = await res.json();
+        document.getElementById('adminStudentsCount').textContent = data.students || 0;
+        document.getElementById('adminShares').textContent = data.shares || 0;
+        document.getElementById('adminTotalXP').textContent = data.totalXP || 0;
+        document.getElementById('adminTasks').textContent = data.tasksCompleted || 0;
+        document.getElementById('exportData').onclick = async ()=>{
+          const res2 = await fetch(ENDPOINTS.progress + '?export=1');
+          const blob = await res2.blob();
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url; a.download = 'niftii_server_data.json'; a.click();
+          URL.revokeObjectURL(url);
+        };
+      }catch(err){}
+    }
+
+    /* רענון XP/מצב מהשרת */
+    async function refreshProgress(){
+      try{
+        const res = await fetch(ENDPOINTS.progress);
+        const j = await res.json();
+        setXP(j.xp || 0);
+        updateProgress();
+      }catch(err){
+        updateProgress();
+      }
+    }
+
     /* אתחול */
     (async function init(){
       await ensureUser();
@@ -889,6 +1023,8 @@
       appearOnScroll();
       await refreshProgress();
       await renderLeaderboardServer();
+      await renderSharesGraph();
+      await loadChat();
 
       const d = load();
       if(d.shareUrl){
