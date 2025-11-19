@@ -94,6 +94,8 @@
       inset: 0;
       opacity: 0.22;
       will-change: transform;
+      width:100%;
+      height:100%;
     }
     
     .orb {
@@ -1184,28 +1186,30 @@
     /* חלקיקים */
     function particles(){
       const canvas = document.getElementById('particles');
+      if(!canvas) return;
       const ctx = canvas.getContext('2d');
       function resize(){
         const dpr = window.devicePixelRatio || 1;
         canvas.width = window.innerWidth * dpr;
         canvas.height = window.innerHeight * dpr;
-        ctx.setTransform(1,0,0,1,0,0);
-        ctx.scale(dpr,dpr);
+        canvas.style.width = window.innerWidth + 'px';
+        canvas.style.height = window.innerHeight + 'px';
+        ctx.setTransform(dpr,0,0,dpr,0,0);
       }
       resize();
       window.addEventListener('resize', resize);
 
       const PCOUNT = 72;
-      const ps = new Array(PCOUNT).fill(0).map(()=>({
+      const ps = new Array(PCOUNT).fill(0).map(()=>(({
         x: Math.random()*window.innerWidth,
         y: Math.random()*window.innerHeight,
         r: Math.random()*1.8 + 0.7,
         vx: (Math.random()-0.5)*0.3,
         vy: (Math.random()-0.5)*0.3,
         c: Math.random()<.5 ? 'rgba(0,255,225,.7)' : 'rgba(255,77,143,.7)'
-      }));
+      })));
       function step(){
-        ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
         for(const p of ps){
           p.x += p.vx; p.y += p.vy;
           if(p.x<0||p.x>window.innerWidth) p.vx*=-1;
@@ -1292,7 +1296,7 @@
       const d = load();
       const i = Math.floor(Math.random() * cards.length);
       const c = cards[i];
-      SFX.currentTime = 0; SFX.play();
+      try{ SFX.currentTime = 0; SFX.play(); }catch(e){}
       showCard(c);
       try{
         await fetch(ENDPOINTS.progress, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ userId:d.userId, xp:c.xp, event:'draw_card', title:c.title }) });
@@ -1717,47 +1721,3 @@
           ${currentLine === codeLines.length - 1 ? '<span class="code-cursor"></span>' : ''}
         `;
         
-        codeContent.appendChild(lineElement);
-        currentLine++;
-        
-        // גלילה אוטומטית לתחתית
-        codeContent.scrollTop = codeContent.scrollHeight;
-        
-        // הוסף את השורה הבאה
-        if (currentLine < codeLines.length) {
-          setTimeout(addNextLine, codeLines[currentLine].delay - line.delay);
-        }
-      }
-      
-      // התחל את האנימציה
-      addNextLine();
-    }
-
-    /* אתחול */
-    (async function init(){
-      await ensureUser();
-      await captureReferral();
-      particles();
-      appearOnScroll();
-      await refreshProgress();
-      await renderLeaderboardServer();
-      await renderSharesGraph();
-      await loadChat();
-
-      const d = load();
-      if(d.shareUrl){
-        document.getElementById('shareUrl').value = d.shareUrl;
-        revealPostConnect();
-      }
-      document.getElementById('drawCardBtn')?.addEventListener('click', drawCard);
-      document.getElementById('mintNftBtn')?.addEventListener('click', openMintNft);
-      document.getElementById('mintBtn')?.addEventListener('click', mintNft);
-
-      await renderAdmin();
-      
-      // התחל את אנימציית הקוד הרץ
-      initRunningCode();
-    })();
-  </script>
-</body>
-</html>
